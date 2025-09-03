@@ -8,6 +8,9 @@ import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Switch from "@/components/form/switch/Switch";
 import { useDropzone } from "react-dropzone";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.css";
+import { CalenderIcon } from "@/icons";
 
 interface ClientRegistrationModalProps {
   isOpen: boolean;
@@ -47,6 +50,87 @@ interface ClientData {
   homeNo: string;
   owned: boolean;
   value: string;
+  loanType: string;
+}
+
+type DatePickerPropsType = {
+  id: string;
+  mode?: "single" | "multiple" | "range" | "time";
+  onChange?: flatpickr.Options.Hook | flatpickr.Options.Hook[];
+  defaultDate?: flatpickr.Options.DateOption;
+  label?: string;
+  placeholder?: string;
+  formData: ClientData;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+function DatePicker({
+  id,
+  mode = "single",
+  onChange,
+  defaultDate,
+  label,
+  placeholder,
+  formData,
+  handleInputChange,
+}: DatePickerPropsType) {
+  useEffect(() => {
+    const flatPickr = flatpickr(`#${id}`, {
+      mode,
+      static: true,
+      monthSelectorType: "static",
+      dateFormat: "Y-m-d",
+      defaultDate: defaultDate || formData.birthDate,
+      onChange: (selectedDates, dateStr, instance) => {
+        // Call the provided onChange if it exists
+        if (onChange) {
+          if (Array.isArray(onChange)) {
+            onChange.forEach((hook) => hook(selectedDates, dateStr, instance));
+          } else {
+            onChange(selectedDates, dateStr, instance);
+          }
+        }
+        // Update formData via handleInputChange
+        const event = {
+          target: { name: "birthDate", value: dateStr },
+        } as React.ChangeEvent<HTMLInputElement>;
+        handleInputChange(event);
+      },
+    });
+
+    return () => {
+      if (!Array.isArray(flatPickr)) {
+        flatPickr.destroy();
+      }
+    };
+  }, [id, mode, onChange, defaultDate, formData.birthDate, handleInputChange]);
+
+  return (
+    <div className="relative">
+      {label && (
+        <label
+          htmlFor={id}
+          className="text-xs font-medium text-gray-700 dark:text-gray-200"
+        >
+          {label}
+        </label>
+      )}
+      <div className="relative mt-1">
+        <input
+          id={id}
+          type="text"
+          name="birthDate"
+          value={formData.birthDate}
+          onChange={handleInputChange}
+          placeholder={placeholder || "Select a date"}
+          className="w-full p-2.5 pr-10 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-500 focus:border-transparent transition text-sm bg-white dark:bg-gray-700 dark:text-white"
+        />
+        <span className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
+          <CalenderIcon className="size-5" />
+        </span>
+      </div>
+    </div>
+  );
 }
 
 export default function ClientRegistrationModal({
@@ -55,7 +139,7 @@ export default function ClientRegistrationModal({
   loanType,
   onSubmit,
 }: ClientRegistrationModalProps) {
-  const [activeTab, setActiveTab] = useState("personal");
+  const [activeTab, setActiveTab] = useState("loanType");
   const [formData, setFormData] = useState<ClientData>({
     type: "Customer",
     title: "",
@@ -87,6 +171,7 @@ export default function ClientRegistrationModal({
     homeNo: "",
     owned: false,
     value: "",
+    loanType: loanType,
   });
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -115,8 +200,18 @@ export default function ClientRegistrationModal({
     "Integrated Bar of the Philippines (IBP) ID",
   ];
 
+  // Loan Types
+  const loanTypes = [
+    "Personal Loan",
+    "Business Loan",
+    "Home Loan",
+    "Car Loan",
+    "Education Loan",
+  ];
+
   // Define tabs for pagination
   const tabs = [
+    { id: "loanType", label: "Loan Type" },
     { id: "personal", label: "Personal Info" },
     { id: "financial", label: "Financial Info" },
     { id: "address", label: "Address" },
@@ -230,13 +325,13 @@ export default function ClientRegistrationModal({
     e.preventDefault();
     e.stopPropagation();
     console.log("Submit button clicked"); // Debug log
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.mobile || !formData.addressLine) {
-      alert("Please fill out all required fields: First Name, Last Name, Email, Mobile, and Address Line.");
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.mobile || !formData.addressLine || !formData.loanType) {
+      alert("Please fill out all required fields: Loan Type, First Name, Last Name, Email, Mobile, and Address Line.");
       return;
     }
 
     const dataToSave = {
-      loanType,
+      loanType: formData.loanType,
       client: formData,
       capturedImages,
     };
@@ -277,7 +372,7 @@ export default function ClientRegistrationModal({
     },
   });
 
-  const { getRootProps: getImageRootProps, getInputProps: getImageInputProps } = useDropzone({
+  useDropzone({
     onDrop: onDropImage,
     accept: {
       "image/png": [],
@@ -306,7 +401,7 @@ export default function ClientRegistrationModal({
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h4 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
-            Client Registration - {loanType}
+            Client Registration
           </h4>
           <button
             onClick={handleClose}
@@ -373,6 +468,31 @@ export default function ClientRegistrationModal({
 
         <form className="flex flex-col" onClick={(e) => e.stopPropagation()}>
           <div className="custom-scrollbar max-h-[400px] overflow-y-auto px-4 py-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            {activeTab === "loanType" && (
+              <div>
+                <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Loan Type
+                </h5>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-gray-700 dark:text-gray-200">Loan Type *</Label>
+                    <select
+                      name="loanType"
+                      value={formData.loanType}
+                      onChange={handleInputChange}
+                      className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-transparent transition text-sm"
+                    >
+                      <option value="">Select Loan Type</option>
+                      {loanTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
             {activeTab === "personal" && (
               <div>
                 <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -431,16 +551,14 @@ export default function ClientRegistrationModal({
                       className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-500 focus:border-transparent transition text-sm"
                     />
                   </div>
-                  <div>
-                    <Label className="text-xs font-medium text-gray-700 dark:text-gray-200">Birthdate</Label>
-                    <Input
-                      type="date"
-                      name="birthDate"
-                      value={formData.birthDate}
-                      onChange={handleInputChange}
-                      className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-brand-500 focus:border-transparent transition text-sm"
-                    />
-                  </div>
+                  <DatePicker
+                    id="birthDatePicker"
+                    label="Birthdate"
+                    mode="single"
+                    formData={formData}
+                    handleInputChange={handleInputChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
+                    placeholder="YYYY-MM-DD"
+                  />
                   <div>
                     <Label className="text-xs font-medium text-gray-700 dark:text-gray-200">Gender</Label>
                     <select
@@ -877,7 +995,8 @@ export default function ClientRegistrationModal({
                   !formData.lastName ||
                   !formData.email ||
                   !formData.mobile ||
-                  !formData.addressLine
+                  !formData.addressLine ||
+                  !formData.loanType
                 }
                 className="px-4 py-1.5 bg-brand-500 text-white rounded-md hover:bg-brand-600 transition disabled:opacity-50 shadow-sm text-sm"
               >

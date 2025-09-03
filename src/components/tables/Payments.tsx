@@ -13,15 +13,17 @@ import Image from "next/image";
 import * as XLSX from "xlsx";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
-import { Ellipsis, Eye, Edit, Check, X } from "lucide-react";
+import { Ellipsis, Eye, Edit, Check, X, Plus } from "lucide-react";
 import { getActions, tableData } from "./utils";
 import Pagination from "@/components/tables/Pagination";
+import AddPaymentModal from "@/components/ui/modal/AddPaymentModal"; // Import the modal component
 
 export default function PaymentsTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
   const itemsPerPage = 10;
 
   const validStatuses = [
@@ -91,6 +93,10 @@ export default function PaymentsTable() {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
+  const handleAddPayment = () => {
+    setIsModalOpen(true); // Open the modal
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -115,8 +121,16 @@ export default function PaymentsTable() {
             ))}
           </select>
           <button
+            onClick={handleAddPayment}
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center gap-2"
+            title="Add Payment"
+          >
+            <Plus className="h-5 w-5" />
+            Add Payment
+          </button>
+          <button
             onClick={exportToExcel}
-            className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-md text-sm hover:bg-green-600 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-800 text-white rounded-md text-sm hover:bg-green-600 transition-colors flex items-center gap-2"
             title="Export to Excel"
           >
             <Image
@@ -257,7 +271,7 @@ export default function PaymentsTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => setOpenDropdownId(null)}
                             >
-                              <div className="bg-gradient-to-r from-gray-500 to-gray-600 dark:bg-gray-400 rounded-full h-6 w-6 flex items-center justify-center">
+                              <div className="bg-gradient-to-r from-gray-600 to-gray-800 dark:bg-gray-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Eye className="h-4 w-4 text-white" />
                               </div>
                               View Details
@@ -266,7 +280,7 @@ export default function PaymentsTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => setOpenDropdownId(null)}
                             >
-                              <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
+                              <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Edit className="h-4 w-4 text-white" />
                               </div>
                               Edit
@@ -275,7 +289,7 @@ export default function PaymentsTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => setOpenDropdownId(null)}
                             >
-                              <div className="bg-gradient-to-r from-green-500 to-green-600 dark:bg-green-400 rounded-full h-6 w-6 flex items-center justify-center">
+                              <div className="bg-gradient-to-r from-green-600 to-green-800 dark:bg-green-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Check className="h-4 w-4 text-white" />
                               </div>
                               Approve
@@ -284,7 +298,7 @@ export default function PaymentsTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => setOpenDropdownId(null)}
                             >
-                              <div className="bg-gradient-to-r from-red-500 to-red-600 dark:bg-red-400 rounded-full h-6 w-6 flex items-center justify-center">
+                              <div className="bg-gradient-to-r from-red-600 to-red-800 dark:bg-red-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <X className="h-4 w-4 text-white" />
                               </div>
                               Reject
@@ -312,6 +326,8 @@ export default function PaymentsTable() {
         itemsPerPage={itemsPerPage}
         onPageChange={setCurrentPage}
       />
+      {/* Render the AddPaymentModal */}
+      <AddPaymentModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
-}
+};

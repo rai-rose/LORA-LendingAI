@@ -15,7 +15,7 @@ import {
   FileText,
   CheckCircle,
   ClipboardList,
-  DollarSign,
+  PhilippinePeso,
   Database,
   UserCog,
   Cog,
@@ -42,7 +42,7 @@ const navItems: NavItem[] = [
       { name: "Applications", path: "/loans/loan-application", icon: <FileText className="w-4 h-4" /> },
       { name: "Approval", path: "/loans/loan-application-approval", icon: <CheckCircle className="w-4 h-4" /> },
       { name: "Active Contracts", path: "/loans/loan-contract-list", icon: <ClipboardList className="w-4 h-4" /> },
-      { name: "Payments", path: "/loans/payments", icon: <DollarSign className="w-4 h-4" /> },
+      { name: "Payments", path: "/loans/payments", icon: <PhilippinePeso className="w-4 h-4" /> },
     ],
   },
   {

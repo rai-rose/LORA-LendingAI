@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
-import { Ellipsis, Eye, Check, X, Edit } from "lucide-react";
+import { Ellipsis, X, Edit } from "lucide-react";
 import Image from "next/image";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/modal";
@@ -28,6 +28,7 @@ export default function LoanApplicationTable() {
   const [selectedLoanType, setSelectedLoanType] = useState("");
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const itemsPerPage = 10;
   const { isOpen, openModal, closeModal } = useModal();
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
@@ -53,9 +54,15 @@ export default function LoanApplicationTable() {
     "Extension Loan",
   ];
 
+  // Debug state changes with call stack
+  const setIsLoanDetailsOpenWithLog = (value: boolean) => {
+    console.log(`Setting isLoanDetailsOpen to ${value}, caller:`, new Error().stack);
+    setIsLoanDetailsOpen(value);
+  };
+
   // Reset isLoanDetailsOpen on component mount
   useEffect(() => {
-    setIsLoanDetailsOpen(false);
+    setIsLoanDetailsOpenWithLog(false);
     console.log("LoanApplicationTable mounted, isLoanDetailsOpen reset to false");
   }, []);
 
@@ -104,14 +111,15 @@ export default function LoanApplicationTable() {
   };
 
   const handleOpenLoanDetails = () => {
-    console.log("Opening LoanDetailsModal");
+    console.log("handleOpenLoanDetails called, opening LoanDetailsModal");
     setIsRegistrationOpen(false);
-    setIsLoanDetailsOpen(true);
+    setIsLoanDetailsOpenWithLog(true);
+    setHasUserInteracted(true);
   };
 
   const handleCloseLoanDetails = () => {
     console.log("Closing LoanDetailsModal");
-    setIsLoanDetailsOpen(false);
+    setIsLoanDetailsOpenWithLog(false);
     setSelectedLoanType("");
   };
 
@@ -144,7 +152,7 @@ export default function LoanApplicationTable() {
           </select>
           <Button
             onClick={handleAddNewLoan}
-            className="px-4 py-2 h-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+            className="px-4 py-2 h-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
           >
             <svg
               className="w-5 h-5"
@@ -233,12 +241,17 @@ export default function LoanApplicationTable() {
         isOpen={isRegistrationOpen}
         onClose={handleCloseRegistration}
         loanType={selectedLoanType}
-        onSubmit={handleOpenLoanDetails}
+        onSubmit={() => {
+          console.log("ClientRegistrationModal onSubmit triggered");
+          handleOpenLoanDetails();
+        }}
       />
-      <LoanDetailsModal
-        isOpen={isLoanDetailsOpen}
-        onClose={handleCloseLoanDetails}
-      />
+      {hasUserInteracted && (
+        <LoanDetailsModal
+          isOpen={isLoanDetailsOpen}
+          onClose={handleCloseLoanDetails}
+        />
+      )}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
           <div className="min-w-[1102px]">
@@ -272,7 +285,10 @@ export default function LoanApplicationTable() {
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((order) => (
-                    <TableRow key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-150">
+                    <TableRow
+                      key={order.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-150"
+                    >
                       <TableCell className="px-5 py-4 sm:px-6 text-start">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 overflow-hidden rounded-full">
@@ -359,28 +375,10 @@ export default function LoanApplicationTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => setOpenDropdownId(null)}
                             >
-                              <div className="bg-gradient-to-r from-gray-500 to-gray-600 dark:bg-gray-400 rounded-full h-6 w-6 flex items-center justify-center">
-                                <Eye className="h-4 w-4 text-white" />
-                              </div>
-                              View Details
-                            </DropdownItem>
-                            <DropdownItem
-                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                              onItemClick={() => setOpenDropdownId(null)}
-                            >
                               <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Edit className="h-4 w-4 text-white" />
                               </div>
                               Edit
-                            </DropdownItem>
-                            <DropdownItem
-                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                              onItemClick={() => setOpenDropdownId(null)}
-                            >
-                              <div className="bg-gradient-to-r from-green-500 to-green-600 dark:bg-green-400 rounded-full h-6 w-6 flex items-center justify-center">
-                                <Check className="h-4 w-4 text-white" />
-                              </div>
-                              Approve
                             </DropdownItem>
                             <DropdownItem
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"

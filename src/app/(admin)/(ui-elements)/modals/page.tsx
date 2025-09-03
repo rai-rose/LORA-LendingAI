@@ -4,7 +4,6 @@ import FormInModal from "@/components/example/ModalExample/FormInModal";
 import FullScreenModal from "@/components/example/ModalExample/FullScreenModal";
 import ModalBasedAlerts from "@/components/example/ModalExample/ModalBasedAlerts";
 import VerticallyCenteredModal from "@/components/example/ModalExample/VerticallyCenteredModal";
-import LoanDetailsModal from "@/components/example/ModalExample/LoanDetailsModal";
 import { Metadata } from "next";
 import React from "react";
 
@@ -25,7 +24,6 @@ export default function Modals() {
         <FormInModal />
         <FullScreenModal />
         <ModalBasedAlerts />
-        <LoanDetailsModal />
       </div>
     </div>
   );

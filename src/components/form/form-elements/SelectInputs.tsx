@@ -64,6 +64,7 @@ import React from "react";
 import { ChevronDownIcon } from "@/icons";
 
 interface SelectProps {
+  name?: string; // Add name to the interface
   options: { value: string; label: string }[];
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -73,6 +74,7 @@ interface SelectProps {
 }
 
 const Select: React.FC<SelectProps> = ({
+  name,
   options,
   value,
   onChange,
@@ -83,6 +85,7 @@ const Select: React.FC<SelectProps> = ({
   return (
     <div className="relative">
       <select
+        name={name} // Pass the name prop to the select element
         value={value}
         onChange={onChange}
         disabled={disabled}
