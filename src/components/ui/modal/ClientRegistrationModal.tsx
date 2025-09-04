@@ -15,7 +15,7 @@ import { CalenderIcon } from "@/icons";
 interface ClientRegistrationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  loanType: string;
+  processType: string;
   onSubmit: () => void;
 }
 
@@ -51,6 +51,7 @@ interface ClientData {
   owned: boolean;
   value: string;
   loanType: string;
+  processType: string;
 }
 
 type DatePickerPropsType = {
@@ -82,7 +83,6 @@ function DatePicker({
       dateFormat: "Y-m-d",
       defaultDate: defaultDate || formData.birthDate,
       onChange: (selectedDates, dateStr, instance) => {
-        // Call the provided onChange if it exists
         if (onChange) {
           if (Array.isArray(onChange)) {
             onChange.forEach((hook) => hook(selectedDates, dateStr, instance));
@@ -90,7 +90,6 @@ function DatePicker({
             onChange(selectedDates, dateStr, instance);
           }
         }
-        // Update formData via handleInputChange
         const event = {
           target: { name: "birthDate", value: dateStr },
         } as React.ChangeEvent<HTMLInputElement>;
@@ -136,7 +135,7 @@ function DatePicker({
 export default function ClientRegistrationModal({
   isOpen,
   onClose,
-  loanType,
+  processType,
   onSubmit,
 }: ClientRegistrationModalProps) {
   const [activeTab, setActiveTab] = useState("loanType");
@@ -171,7 +170,8 @@ export default function ClientRegistrationModal({
     homeNo: "",
     owned: false,
     value: "",
-    loanType: loanType,
+    loanType: "",
+    processType: processType,
   });
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -200,7 +200,7 @@ export default function ClientRegistrationModal({
     "Integrated Bar of the Philippines (IBP) ID",
   ];
 
-  // Loan Types
+  // Loan Types (independent from processTypes)
   const loanTypes = [
     "Personal Loan",
     "Business Loan",
@@ -219,32 +219,12 @@ export default function ClientRegistrationModal({
     { id: "capture", label: "Capture Photo" },
   ];
 
-  // Pagination navigation with event propagation fix
-  const handleNextTab = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("Next button clicked"); // Debug log
-    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
-    if (currentIndex < tabs.length - 1) {
-      setActiveTab(tabs[currentIndex + 1].id);
+  // Update formData.processType when processType prop changes
+  useEffect(() => {
+    if (processType) {
+      setFormData((prev) => ({ ...prev, processType }));
     }
-  };
-
-  const handlePreviousTab = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("Previous button clicked"); // Debug log
-    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
-    if (currentIndex > 0) {
-      setActiveTab(tabs[currentIndex - 1].id);
-    }
-  };
-
-  // Debug onClose trigger
-  const handleClose = () => {
-    console.log("Modal onClose triggered"); // Debug log
-    onClose();
-  };
+  }, [processType]);
 
   // Start/stop camera when tab changes
   useEffect(() => {
@@ -324,14 +304,15 @@ export default function ClientRegistrationModal({
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("Submit button clicked"); // Debug log
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.mobile || !formData.addressLine || !formData.loanType) {
-      alert("Please fill out all required fields: Loan Type, First Name, Last Name, Email, Mobile, and Address Line.");
+    console.log("Submit button clicked");
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.mobile || !formData.addressLine || !formData.loanType || !formData.processType) {
+      alert("Please fill out all required fields: Loan Type, Process Type, First Name, Last Name, Email, Mobile, and Address Line.");
       return;
     }
 
     const dataToSave = {
       loanType: formData.loanType,
+      processType: formData.processType,
       client: formData,
       capturedImages,
     };
@@ -392,13 +373,37 @@ export default function ClientRegistrationModal({
     setActiveTab("capture");
   };
 
+  const handleNextTab = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("Next button clicked");
+    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
+    if (currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1].id);
+    }
+  };
+
+  const handlePreviousTab = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("Previous button clicked");
+    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
+    if (currentIndex > 0) {
+      setActiveTab(tabs[currentIndex - 1].id);
+    }
+  };
+
+  const handleClose = () => {
+    console.log("Modal onClose triggered");
+    onClose();
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={handleClose} className="max-w-2xl w-full mx-auto my-4">
       <div
         className="no-scrollbar relative w-full overflow-y-auto rounded-xl bg-white dark:bg-gray-900 p-6 lg:p-8 shadow-2xl transition-all duration-300"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h4 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
             Client Registration
@@ -413,10 +418,9 @@ export default function ClientRegistrationModal({
           </button>
         </div>
         <p className="mb-6 text-sm text-gray-600 dark:text-gray-300">
-          Fill out the details below to register a client for the selected loan type.
+          Fill out the details below to register a client for the selected loan type and process type.
         </p>
 
-        {/* Progress Indicator */}
         <div className="mb-4">
           <div className="flex justify-between mb-1">
             {tabs.map((tab, index) => (
@@ -442,7 +446,6 @@ export default function ClientRegistrationModal({
           </div>
         </div>
 
-        {/* Tab Navigation */}
         <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
           <nav className="flex gap-3" aria-label="Tabs">
             {tabs.map((tab) => (
@@ -456,7 +459,7 @@ export default function ClientRegistrationModal({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log(`Tab ${tab.id} clicked`); // Debug log
+                  console.log(`Tab ${tab.id} clicked`);
                   setActiveTab(tab.id);
                 }}
               >
@@ -489,6 +492,16 @@ export default function ClientRegistrationModal({
                         </option>
                       ))}
                     </select>
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-gray-700 dark:text-gray-200">Process Type *</Label>
+                    <Input
+                      type="text"
+                      name="processType"
+                      value={formData.processType}
+                      readOnly
+                      className="w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-700 dark:text-white text-sm cursor-not-allowed"
+                    />
                   </div>
                 </div>
               </div>
@@ -956,7 +969,6 @@ export default function ClientRegistrationModal({
             )}
           </div>
 
-          {/* Pagination and Action Buttons */}
           <div className="flex items-center justify-between mt-6 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-b-xl">
             <div className="flex gap-3">
               <Button
@@ -996,7 +1008,8 @@ export default function ClientRegistrationModal({
                   !formData.email ||
                   !formData.mobile ||
                   !formData.addressLine ||
-                  !formData.loanType
+                  !formData.loanType ||
+                  !formData.processType
                 }
                 className="px-4 py-1.5 bg-brand-500 text-white rounded-md hover:bg-brand-600 transition disabled:opacity-50 shadow-sm text-sm"
               >

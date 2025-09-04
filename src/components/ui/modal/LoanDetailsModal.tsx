@@ -476,6 +476,9 @@ export default function LoanDetailsModal({}: LoanDetailsModalProps) {
                       </h2>
                       <p className="text-md text-gray-600 dark:text-gray-300 mt-2 flex items-center space-x-4">
                         <span>{loanType || "Loan Type Not Specified"}</span>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                          {clientData.loanId || "Loan ID Not Specified"}
+                        </span>
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
                           {clientData.status || "Pending"}
                         </span>
@@ -524,26 +527,6 @@ export default function LoanDetailsModal({}: LoanDetailsModalProps) {
                               options={loanType ? loanSubClassOptions[loanType as keyof typeof loanSubClassOptions] || [] : []}
                               className="h-10 w-full rounded-md border appearance-none px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-900 dark:text-white"
                               disabled={!loanType}
-                            />
-                          </div>
-                          <div>
-                            <Label>Status</Label>
-                            <Input
-                              name="status"
-                              value={clientData.status}
-                              onChange={handleClientInputChange}
-                              className="h-10 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-900 dark:text-white"
-                              placeholder="Enter status"
-                            />
-                          </div>
-                          <div>
-                            <Label>Loan ID</Label>
-                            <Input
-                              name="loanId"
-                              value={clientData.loanId}
-                              onChange={handleClientInputChange}
-                              className="h-10 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-900 dark:text-white"
-                              placeholder="Enter loan ID"
                             />
                           </div>
                           <div>

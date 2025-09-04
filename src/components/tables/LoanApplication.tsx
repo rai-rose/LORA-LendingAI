@@ -25,7 +25,7 @@ import Button from "../ui/button/Button";
 export default function LoanApplicationTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [selectedLoanType, setSelectedLoanType] = useState("");
+  const [selectedProcessType, setSelectedProcessType] = useState("");
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
@@ -94,12 +94,12 @@ export default function LoanApplicationTable() {
   }, [filteredData, currentPage, itemsPerPage]);
 
   const handleAddNewLoan = () => {
-    setSelectedLoanType("");
+    setSelectedProcessType("");
     openModal();
   };
 
   const handleProceed = () => {
-    if (selectedLoanType) {
+    if (selectedProcessType) {
       closeModal();
       setIsRegistrationOpen(true);
     }
@@ -107,7 +107,7 @@ export default function LoanApplicationTable() {
 
   const handleCloseRegistration = () => {
     setIsRegistrationOpen(false);
-    setSelectedLoanType("");
+    setSelectedProcessType("");
   };
 
   const handleOpenLoanDetails = () => {
@@ -120,7 +120,7 @@ export default function LoanApplicationTable() {
   const handleCloseLoanDetails = () => {
     console.log("Closing LoanDetailsModal");
     setIsLoanDetailsOpenWithLog(false);
-    setSelectedLoanType("");
+    setSelectedProcessType("");
   };
 
   const toggleDropdown = (id: number) => {
@@ -178,7 +178,7 @@ export default function LoanApplicationTable() {
               Select Process Type
             </h5>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Choose the type of loan application to proceed with your request
+              Choose the type of process to proceed with your request
             </p>
           </div>
           <div className="mt-6">
@@ -197,16 +197,16 @@ export default function LoanApplicationTable() {
                         <input
                           className="sr-only form-check-input"
                           type="radio"
-                          name="loan-type"
+                          name="process-type"
                           value={processType}
                           id={`processType${processType.replace(/\s/g, "")}`}
-                          checked={selectedLoanType === processType}
-                          onChange={() => setSelectedLoanType(processType)}
+                          checked={selectedProcessType === processType}
+                          onChange={() => setSelectedProcessType(processType)}
                         />
                         <span className="flex items-center justify-center w-5 h-5 mr-2 border border-gray-300 rounded-full box dark:border-gray-700">
                           <span
                             className={`h-2 w-2 rounded-full bg-white ${
-                              selectedLoanType === processType ? "block" : "hidden"
+                              selectedProcessType === processType ? "block" : "hidden"
                             }`}
                           ></span>
                         </span>
@@ -230,7 +230,7 @@ export default function LoanApplicationTable() {
               onClick={handleProceed}
               type="button"
               className="btn btn-success flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto"
-              disabled={!selectedLoanType}
+              disabled={!selectedProcessType}
             >
               Proceed
             </button>
@@ -240,7 +240,7 @@ export default function LoanApplicationTable() {
       <ClientRegistrationModal
         isOpen={isRegistrationOpen}
         onClose={handleCloseRegistration}
-        loanType={selectedLoanType}
+        processType={selectedProcessType}
         onSubmit={() => {
           console.log("ClientRegistrationModal onSubmit triggered");
           handleOpenLoanDetails();
