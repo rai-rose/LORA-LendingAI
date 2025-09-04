@@ -119,51 +119,26 @@ export default function BorrowersTable() {
           <div className="min-w-[600px]">
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                <TableRow>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Branch Encoded
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Customer
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Address
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Blocked
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Type
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    ID
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Actions
-                  </TableCell>
-                </TableRow>
-              </TableHeader>
+                              <TableRow>
+                                {[
+                                  "Branch Encoded",
+                                  "Customer",
+                                  "Address",
+                                  "Blocked",
+                                  "Type",
+                                  "ID",
+                                  "Actions",
+                                ].map((title) => (
+                                  <TableCell
+                                    key={title}
+                                    isHeader
+                                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                  >
+                                    {title}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHeader>
               <TableBody className="text-sm divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((borrower) => (

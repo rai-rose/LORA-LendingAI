@@ -93,39 +93,24 @@ export default function PensionTypeTable() {
           <div className="min-w-[600px]">
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                <TableRow>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Code
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Description
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Main Class
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Account Link
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Actions
-                  </TableCell>
-                </TableRow>
-              </TableHeader>
+                              <TableRow>
+                                {[
+                                  "Code",
+                                  "Description",
+                                  "Main Class",
+                                  "Account Link",
+                                  "Actions",
+                                ].map((title) => (
+                                  <TableCell
+                                    key={title}
+                                    isHeader
+                                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                  >
+                                    {title}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHeader>
               <TableBody className="text-sm divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((pension) => (

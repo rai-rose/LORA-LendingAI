@@ -91,33 +91,23 @@ export default function CollectorsTable() {
           <div className="min-w-[400px]">
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                <TableRow>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    ID Number
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Collector
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Area
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Actions
-                  </TableCell>
-                </TableRow>
-              </TableHeader>
+                              <TableRow>
+                                {[
+                                  "ID Number",
+                                  "Collector",
+                                  "Area",
+                                  "Actions",
+                                ].map((title) => (
+                                  <TableCell
+                                    key={title}
+                                    isHeader
+                                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                  >
+                                    {title}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHeader>
               <TableBody className="text-sm divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((collector) => (

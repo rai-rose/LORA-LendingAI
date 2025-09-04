@@ -92,39 +92,24 @@ export default function DefaultDeductionTable() {
           <div className="min-w-[500px]">
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                <TableRow>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Line No.
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Code
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Description
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    SRP
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Actions
-                  </TableCell>
-                </TableRow>
-              </TableHeader>
+                              <TableRow>
+                                {[
+                                  "Line No.",
+                                  "Code",
+                                  "Description",
+                                  "SRP",
+                                  "Actions",
+                                ].map((title) => (
+                                  <TableCell
+                                    key={title}
+                                    isHeader
+                                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                  >
+                                    {title}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHeader>
               <TableBody className="text-sm divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((deduction) => (

@@ -91,27 +91,22 @@ export default function RequirementsTable() {
           <div className="min-w-[400px]">
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                <TableRow>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Code
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Requirement Description
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-sm dark:text-gray-400"
-                  >
-                    Actions
-                  </TableCell>
-                </TableRow>
-              </TableHeader>
+                              <TableRow>
+                                {[
+                                  "Code",
+                                  "Requirement Description",
+                                  "Actions",
+                                ].map((title) => (
+                                  <TableCell
+                                    key={title}
+                                    isHeader
+                                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                  >
+                                    {title}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            </TableHeader>
               <TableBody className="text-sm divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((requirement) => (
