@@ -223,14 +223,6 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ isOpen, onClose, onSa
     onClose();
   };
 
-  const handleReprintOR = () => {
-    console.log("Reprint OR clicked");
-  };
-
-  const handleViewJournal = () => {
-    console.log("View Journal Voucher clicked");
-  };
-
   if (!isOpen) return null;
 
   return (

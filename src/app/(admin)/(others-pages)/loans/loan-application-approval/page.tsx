@@ -7,7 +7,7 @@ import React from "react";
 export const metadata: Metadata = {
   title: "Loan Application Approval",
   description:
-    "Loan Application Approval page for TailAdmin",
+    "Loan Application Approval page for Lending AI",
   // other metadata
 };
 

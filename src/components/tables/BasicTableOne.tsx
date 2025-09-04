@@ -10,6 +10,7 @@ interface BasicTableOneProps {
     | "loan-application-approval"
     | "loan-contract-list"
     | "payments"
+    | "loan-management"
     | "user-settings"
     | "activity-logs"
     | "system";
@@ -39,6 +40,11 @@ const PaymentsTable = dynamic(() => import("./Payments"), {
   loading: () => <LoadingSpinner />,
 });
 
+const LoanManagementTable = dynamic(() => import("./LoanManagement"), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+
 const UsersTable = dynamic(() => import("./UsersTable"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
@@ -63,9 +69,11 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
       )}
       {activeMenu === "loan-contract-list" && <LoanContractListTable />}
       {activeMenu === "payments" && <PaymentsTable />}
+      {activeMenu === "loan-management" && <LoanManagementTable />}
       {activeMenu === "user-settings" && <UsersTable />}
       {activeMenu === "activity-logs" && <ActivityLogsTable />}
       {activeMenu === "system" && <SystemSettings />}
+
     </div>
   );
 };

@@ -36,7 +36,7 @@ const Input: FC<InputProps> = ({
   success = false,
   error = false,
   hint,
-  value,
+  value = "",
   multiple,
   accept,
   readOnly = false,

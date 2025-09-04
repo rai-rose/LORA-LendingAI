@@ -4,17 +4,17 @@ import BasicTableOne from "@/components/tables/BasicTableOne";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Billing & Payments",
-  description: "Billing & Payments page for Lending AI",
+  title: "Loan Management",
+  description: "Loan Management page for Lending AI",
 };
 
-export default function Payments() {
+export default function LoanManagement() {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Payments" />
+      <PageBreadcrumb pageTitle="Loan Management" />
       <div className="space-y-6">
-        <ComponentCard title="Manage and View payments  ">
-          <BasicTableOne activeMenu="payments" />
+        <ComponentCard title="Manage and View loan contracts">
+          <BasicTableOne activeMenu="loan-management" />
         </ComponentCard>
       </div>
     </div>

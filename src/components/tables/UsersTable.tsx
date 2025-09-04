@@ -176,7 +176,7 @@ export default function UserManagementTable() {
           </select>
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 h-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+            className="px-4 py-2 h-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
           >
             <Plus className="h-4 w-4" />
             Add New User
@@ -391,7 +391,7 @@ export default function UserManagementTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => handleViewDetails(user.id)}
                             >
-                              <div className="bg-gradient-to-r from-gray-500 to-gray-600 rounded-full h-6 w-6 flex items-center justify-center">
+                              <div className="bg-gradient-to-r from-gray-600 to-gray-800 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Eye className="h-4 w-4 text-white" />
                               </div>
                               View Details
@@ -400,7 +400,7 @@ export default function UserManagementTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => handleEdit(user.id)}
                             >
-                              <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-full h-6 w-6 flex items-center justify-center">
+                              <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Edit className="h-4 w-4 text-white" />
                               </div>
                               Edit
@@ -409,7 +409,7 @@ export default function UserManagementTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => handleDelete(user.id)}
                             >
-                              <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-full h-6 w-6 flex items-center justify-center">
+                              <div className="bg-gradient-to-r from-red-600 to-red-800 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Trash className="h-4 w-4 text-white" />
                               </div>
                               Delete

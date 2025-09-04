@@ -4,8 +4,8 @@ import BasicTableOne from "@/components/tables/BasicTableOne";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Next.js Loan Contract List Table | TailAdmin - Next.js Dashboard Template",
-  description: "Loan Contract List Table page for TailAdmin",
+  title: "Loan Contract List",
+  description: "Loan Contract List Table page for Lending AI",
 };
 
 export default function LoanContractList() {

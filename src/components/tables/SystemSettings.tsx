@@ -164,7 +164,7 @@ export default function SystemSettings() {
           </select>
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 h-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+            className="px-4 py-2 h-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
           >
             <Plus className="h-4 w-4" />
             Add New Branch

@@ -375,7 +375,7 @@ export default function LoanApplicationTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => setOpenDropdownId(null)}
                             >
-                              <div className="bg-gradient-to-r from-blue-500 to-blue-600 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
+                              <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Edit className="h-4 w-4 text-white" />
                               </div>
                               Edit
@@ -384,7 +384,7 @@ export default function LoanApplicationTable() {
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
                               onItemClick={() => setOpenDropdownId(null)}
                             >
-                              <div className="bg-gradient-to-r from-red-500 to-red-600 dark:bg-red-400 rounded-full h-6 w-6 flex items-center justify-center">
+                              <div className="bg-gradient-to-r from-red-600 to-red-800 dark:bg-red-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <X className="h-4 w-4 text-white" />
                               </div>
                               Reject
