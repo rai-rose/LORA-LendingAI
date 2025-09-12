@@ -38,7 +38,7 @@ const sampleLogs: Log[] = [
 ];
 
 export default function ActivityLogsPage() {
-  const [logs, setLogs] = useState<Log[]>(sampleLogs);
+  const [logs] = useState<Log[]>(sampleLogs);
   const [filter, setFilter] = useState("");
   const [actionFilter, setActionFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);

@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import Badge from "../ui/badge/Badge";
+} from "../../ui/table";
+import Badge from "../../ui/badge/Badge";
 import { Ellipsis, X, Edit } from "lucide-react";
 import Image from "next/image";
 import { useModal } from "@/hooks/useModal";
@@ -17,10 +17,10 @@ import { Modal } from "@/components/ui/modal";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import Pagination from "@/components/tables/Pagination";
-import { getActions, tableData } from "./utils";
+import { getActions, tableData } from "../utils";
 import ClientRegistrationModal from "@/components/ui/modal/ClientRegistrationModal";
-import LoanDetailsModal from "@/components/ui/modal/LoanDetailsModal";
-import Button from "../ui/button/Button";
+import Button from "../../ui/button/Button";
+import { useRouter } from "next/navigation";
 
 export default function LoanApplicationTable() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,11 +28,10 @@ export default function LoanApplicationTable() {
   const [selectedProcessType, setSelectedProcessType] = useState("");
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const itemsPerPage = 10;
   const { isOpen, openModal, closeModal } = useModal();
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
-  const [isLoanDetailsOpen, setIsLoanDetailsOpen] = useState(false);
+  const router = useRouter();
 
   const validStatuses = [
     "Pending",
@@ -53,23 +52,6 @@ export default function LoanApplicationTable() {
     "Additional Loan",
     "Extension Loan",
   ];
-
-  // Debug state changes with call stack
-  const setIsLoanDetailsOpenWithLog = (value: boolean) => {
-    console.log(`Setting isLoanDetailsOpen to ${value}, caller:`, new Error().stack);
-    setIsLoanDetailsOpen(value);
-  };
-
-  // Reset isLoanDetailsOpen on component mount
-  useEffect(() => {
-    setIsLoanDetailsOpenWithLog(false);
-    console.log("LoanApplicationTable mounted, isLoanDetailsOpen reset to false");
-  }, []);
-
-  // Debug state changes
-  useEffect(() => {
-    console.log("isLoanDetailsOpen changed:", isLoanDetailsOpen);
-  }, [isLoanDetailsOpen]);
 
   const filteredData = useMemo(() => {
     return tableData
@@ -110,17 +92,10 @@ export default function LoanApplicationTable() {
     setSelectedProcessType("");
   };
 
-  const handleOpenLoanDetails = () => {
-    console.log("handleOpenLoanDetails called, opening LoanDetailsModal");
-    setIsRegistrationOpen(false);
-    setIsLoanDetailsOpenWithLog(true);
-    setHasUserInteracted(true);
-  };
-
-  const handleCloseLoanDetails = () => {
-    console.log("Closing LoanDetailsModal");
-    setIsLoanDetailsOpenWithLog(false);
-    setSelectedProcessType("");
+  const handleOpenLoanDetails = (loanId?: string) => {
+    console.log("Navigating to loan details page");
+    // Navigate to loan details page, passing loanId or other identifier if available
+    router.push(`/loan-details${loanId ? `/${loanId}` : ""}`);
   };
 
   const toggleDropdown = (id: number) => {
@@ -241,17 +216,11 @@ export default function LoanApplicationTable() {
         isOpen={isRegistrationOpen}
         onClose={handleCloseRegistration}
         processType={selectedProcessType}
-        onSubmit={() => {
-          console.log("ClientRegistrationModal onSubmit triggered");
-          handleOpenLoanDetails();
+        onSubmit={(loanId?: string) => {
+          console.log("ClientRegistrationModal onSubmit triggered, navigating to loan details");
+          handleOpenLoanDetails(loanId);
         }}
       />
-      {hasUserInteracted && (
-        <LoanDetailsModal
-          isOpen={isLoanDetailsOpen}
-          onClose={handleCloseLoanDetails}
-        />
-      )}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
           <div className="min-w-[1102px]">
@@ -373,12 +342,15 @@ export default function LoanApplicationTable() {
                           >
                             <DropdownItem
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                              onItemClick={() => setOpenDropdownId(null)}
+                              onItemClick={() => {
+                                setOpenDropdownId(null);
+                                handleOpenLoanDetails(order.loanId);
+                              }}
                             >
                               <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Edit className="h-4 w-4 text-white" />
                               </div>
-                              Edit
+                              View Details
                             </DropdownItem>
                             <DropdownItem
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"

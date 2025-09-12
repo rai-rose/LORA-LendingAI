@@ -80,9 +80,9 @@ export default function AreaGroupTable() {
         </button>
         <button
           onClick={handleAddNew}
-          className="px-4 py-2 h-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-5 w-5" />
           Add New
         </button>
       </div>
@@ -91,23 +91,23 @@ export default function AreaGroupTable() {
           <div className="min-w-[400px]">
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                              <TableRow>
-                                {[
-                                  "Code",
-                                  "Description",
-                                  "Branch",
-                                  "Actions",
-                                ].map((title) => (
-                                  <TableCell
-                                    key={title}
-                                    isHeader
-                                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                  >
-                                    {title}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            </TableHeader>
+                <TableRow>
+                  {[
+                    "Code",
+                    "Description",
+                    "Branch",
+                    "Actions",
+                  ].map((title) => (
+                    <TableCell
+                      key={title}
+                      isHeader
+                      className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    >
+                      {title}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHeader>
               <TableBody className="text-sm divide-y divide-gray-100 dark:divide-white/[0.05]">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((areaGroup) => (

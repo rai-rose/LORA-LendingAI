@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client";
+import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid"; // Import UUID for generating loanId
 import React, { useState, useEffect, useRef } from "react";
 import { Modal } from "@/components/ui/modal";
 import Button from "@/components/ui/button/Button";
@@ -52,6 +54,7 @@ interface ClientData {
   value: string;
   loanType: string;
   processType: string;
+  loanId?: string;
 }
 
 type DatePickerPropsType = {
@@ -138,6 +141,7 @@ export default function ClientRegistrationModal({
   processType,
   onSubmit,
 }: ClientRegistrationModalProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("loanType");
   const [formData, setFormData] = useState<ClientData>({
     type: "Customer",
@@ -172,6 +176,7 @@ export default function ClientRegistrationModal({
     value: "",
     loanType: "",
     processType: processType,
+    loanId: "",
   });
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -305,28 +310,43 @@ export default function ClientRegistrationModal({
     e.preventDefault();
     e.stopPropagation();
     console.log("Submit button clicked");
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.mobile || !formData.addressLine || !formData.loanType || !formData.processType) {
-      alert("Please fill out all required fields: Loan Type, Process Type, First Name, Last Name, Email, Mobile, and Address Line.");
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.mobile ||
+      !formData.addressLine ||
+      !formData.loanType ||
+      !formData.processType
+    ) {
+      alert(
+        "Please fill out all required fields: Loan Type, Process Type, First Name, Last Name, Email, Mobile, and Address Line."
+      );
       return;
     }
 
+    const loanId = uuidv4(); // Generate unique loanId
     const dataToSave = {
+      loanId, // Include loanId in saved data
       loanType: formData.loanType,
       processType: formData.processType,
-      client: formData,
+      client: { ...formData, loanId }, // Include loanId in client data
       capturedImages,
+      incomeDetails: "", // Add default empty fields for LoanDetailsPage
+      collateralDetails: "",
     };
     try {
-      localStorage.setItem("clientRegistrationData", JSON.stringify(dataToSave));
+      localStorage.setItem(
+        `clientRegistrationData_${loanId}`,
+        JSON.stringify(dataToSave)
+      );
       console.log("Saved to localStorage:", dataToSave);
+      onSubmit();
+      router.push(`/loans/loan-application-approval/loan-details/${loanId}`); // Redirect to dynamic route
     } catch (error) {
       console.error("Failed to save to localStorage:", error);
       alert("Failed to save client data. Please try again.");
-      return;
     }
-
-    onSubmit();
-    handleClose();
   };
 
   const onDrop = (acceptedFiles: File[]) => {

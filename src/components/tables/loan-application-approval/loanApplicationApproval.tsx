@@ -2,26 +2,28 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import Badge from "../ui/badge/Badge";
+} from "../../ui/table";
+import Badge from "../../ui/badge/Badge";
 import { Ellipsis, Eye, Check, X, Edit } from "lucide-react";
 import Image from "next/image";
-import { getActions, tableData } from "./utils";
+import { getActions, tableData } from "../utils";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import Pagination from "@/components/tables/Pagination";
-import Button from "../ui/button/Button";
+import Button from "../../ui/button/Button";
 
 export default function LoanApplicationApprovalTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -60,6 +62,10 @@ export default function LoanApplicationApprovalTable() {
 
   const toggleDropdown = (id: number) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
+  };
+
+  const handleViewLoanDetails = (loanId?: string) => {
+    router.push(`/loans/loan-application-approval/loan-details${loanId ? `/${loanId}` : ""}`);
   };
 
   return (
@@ -203,7 +209,10 @@ export default function LoanApplicationApprovalTable() {
                           >
                             <DropdownItem
                               className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                              onItemClick={() => setOpenDropdownId(null)}
+                              onItemClick={() => {
+                                setOpenDropdownId(null);
+                                handleViewLoanDetails(order.loanId);
+                              }}
                             >
                               <div className="bg-gradient-to-r from-gray-600 to-gray-800 dark:bg-gray-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <Eye className="h-4 w-4 text-white" />
@@ -235,7 +244,7 @@ export default function LoanApplicationApprovalTable() {
                               <div className="bg-gradient-to-r from-red-600 to-red-800 dark:bg-red-400 rounded-full h-6 w-6 flex items-center justify-center">
                                 <X className="h-4 w-4 text-white" />
                               </div>
-                              Reject
+                              Disapprove
                             </DropdownItem>
                           </Dropdown>
                         </div>

@@ -46,6 +46,7 @@ import React from "react";
 
 interface TextAreaProps {
   value: string;
+  name?: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   className?: string;
   placeholder?: string;

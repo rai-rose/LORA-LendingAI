@@ -1,36 +1,46 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
   TableCell,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import Badge from "../ui/badge/Badge";
+} from "../../ui/table";
+import Badge from "../../ui/badge/Badge";
 import Image from "next/image";
 import * as XLSX from "xlsx";
-import { getActions, tableData } from "./utils";
-import { Ellipsis } from "lucide-react";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
+import { Ellipsis, Eye, Edit, Check, X } from "lucide-react";
+import { getActions, tableData } from "../utils";
 import Pagination from "@/components/tables/Pagination";
 
-export default function LoanContractListTable() {
+export default function PaymentsTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [openDropdownId, setOpenDropdownId] = useState(null); // Use number | null to match PaymentsTable
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
   const itemsPerPage = 10;
 
-  const validStatuses = ["Active", "Overdue", "Deceased", "Closed Account"];
+  const validStatuses = [
+    "Active",
+    "3 Days Before Due",
+    "Today's Due",
+    "Past Due",
+    "Overdue",
+    "Deceased",
+    "Closed Account",
+  ];
 
   const filteredData = useMemo(() => {
     return tableData
       .map((order) => ({
         ...order,
-        actions: getActions(order.status, "loan-contract-list"),
+        actions: getActions(order.status, "payments"),
       }))
       .filter((order) => {
         const matchesSearch = order.user.name
@@ -38,8 +48,8 @@ export default function LoanContractListTable() {
           .includes(searchQuery.toLowerCase());
         const matchesStatus =
           statusFilter === "All" || order.status === statusFilter;
-        const isApproved = order.loanApplied && validStatuses.includes(order.status);
-        return matchesSearch && matchesStatus && isApproved;
+        const isValid = order.loanApplied && validStatuses.includes(order.status);
+        return matchesSearch && matchesStatus && isValid;
       });
   }, [searchQuery, statusFilter]);
 
@@ -47,26 +57,10 @@ export default function LoanContractListTable() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return filteredData.slice(startIndex, endIndex);
-  }, [filteredData, currentPage]);
+  }, [filteredData, currentPage, itemsPerPage]);
 
   const exportToExcel = () => {
-    type ExportRow = {
-      Borrower: string;
-      "Interest Rate": string;
-      "Loan Type": string;
-      "Contract Number": string;
-      "Contract Date": string;
-      Class: string;
-      "Loan ID": string;
-      "Interest Balance": string;
-      "Principal Balance": string;
-      Occurrence: string;
-      "First Due Date": string;
-      "Due Date": string;
-      Status: string;
-    };
-
-    const exportData: ExportRow[] = filteredData.map((order) => ({
+    const exportData = filteredData.map((order) => ({
       Borrower: order.user.name,
       "Interest Rate": order.interestRate || "—",
       "Loan Type": order.loanType,
@@ -84,19 +78,24 @@ export default function LoanContractListTable() {
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Loan Contracts");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payments");
     const colWidths = Object.keys(exportData[0]).map((key) =>
       Math.max(
         key.length,
-        ...exportData.map((row) => String(row[key as keyof ExportRow] || "").length)
+        ...exportData.map((row) => String(row[key as keyof typeof row]).length)
       ) + 2
     );
     worksheet["!cols"] = colWidths.map((w) => ({ wch: w }));
-    XLSX.writeFile(workbook, "loan_contract_list.xlsx"); // Use writeFile to match PaymentsTable
+    XLSX.writeFile(workbook, "payments.xlsx");
   };
 
-  const toggleDropdown = (id) => {
+  const toggleDropdown = (id: number) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
+  };
+
+  const handleViewDetails = () => {
+    router.push("/loans/payments/borrowers-details"); // Navigate to active accounts table
+    setOpenDropdownId(null); // Close the dropdown after navigation
   };
 
   return (
@@ -108,14 +107,12 @@ export default function LoanContractListTable() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-64 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-          aria-label="Search by borrower name"
         />
         <div className="flex items-center gap-4">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-48 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-            aria-label="Filter by status"
           >
             <option value="All">All Statuses</option>
             {validStatuses.map((status) => (
@@ -128,13 +125,12 @@ export default function LoanContractListTable() {
             onClick={exportToExcel}
             className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-800 text-white rounded-md text-sm hover:bg-green-600 transition-colors flex items-center gap-2"
             title="Export to Excel"
-            aria-label="Export loan contracts to Excel"
           >
             <Image
               src="/images/icons/excel.svg"
-              alt="Export to Excel icon"
-              width={20}
-              height={20}
+              alt="Excel"
+              width={18}
+              height={18}
               className="w-5 h-5"
             />
             Export
@@ -184,7 +180,7 @@ export default function LoanContractListTable() {
                               width={40}
                               height={40}
                               src={order.user.image}
-                              alt={`Profile image of ${order.user.name}`}
+                              alt={order.user.name}
                             />
                           </div>
                           <div>
@@ -234,15 +230,18 @@ export default function LoanContractListTable() {
                         <Badge
                           size="sm"
                           color={
-                            order.status === "Active"
+                            order.status === "Active" ||
+                            order.status === "Today's Due" ||
+                            order.status === "3 Days Before Due"
                               ? "success"
-                              : order.status === "Overdue"
+                              : order.status === "Past Due" ||
+                                order.status === "Overdue"
                               ? "warning"
                               : order.status === "Deceased"
                               ? "error"
                               : order.status === "Closed Account"
-                              ? "secondary"
-                              : "default"
+                              ? undefined
+                              : undefined
                           }
                         >
                           {order.status}
@@ -253,8 +252,6 @@ export default function LoanContractListTable() {
                           <button
                             className="dropdown-toggle focus:outline-none p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
                             onClick={() => toggleDropdown(order.id)}
-                            aria-label={`Actions for loan ${order.loanId}`}
-                            aria-expanded={openDropdownId === order.id}
                           >
                             <Ellipsis className="h-4 w-4 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-100 transition-colors duration-150" />
                           </button>
@@ -263,27 +260,42 @@ export default function LoanContractListTable() {
                             onClose={() => setOpenDropdownId(null)}
                             className="w-48 rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800 transition-colors duration-200"
                           >
-                            {Array.isArray(order.actions) && order.actions.length > 0 ? (
-                              order.actions.map((action, index) => (
-                                <DropdownItem
-                                  key={index}
-                                  className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                                  onItemClick={() => {
-                                    action.onClick();
-                                    setOpenDropdownId(null);
-                                  }}
-                                >
-                                  {action.label}
-                                </DropdownItem>
-                              ))
-                            ) : (
-                              <DropdownItem
-                                className="text-black dark:text-white text-sm px-4 py-2.5"
-                                onItemClick={() => setOpenDropdownId(null)}
-                              >
-                                No actions available
-                              </DropdownItem>
-                            )}
+                            <DropdownItem
+                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                              onItemClick={handleViewDetails}
+                            >
+                              <div className="bg-gradient-to-r from-gray-600 to-gray-800 dark:bg-gray-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                <Eye className="h-4 w-4 text-white" />
+                              </div>
+                              View Details
+                            </DropdownItem>
+                            <DropdownItem
+                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                              onItemClick={() => setOpenDropdownId(null)}
+                            >
+                              <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                <Edit className="h-4 w-4 text-white" />
+                              </div>
+                              Edit
+                            </DropdownItem>
+                            <DropdownItem
+                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                              onItemClick={() => setOpenDropdownId(null)}
+                            >
+                              <div className="bg-gradient-to-r from-green-600 to-green-800 dark:bg-green-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                <Check className="h-4 w-4 text-white" />
+                              </div>
+                              Approve
+                            </DropdownItem>
+                            <DropdownItem
+                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                              onItemClick={() => setOpenDropdownId(null)}
+                            >
+                              <div className="bg-gradient-to-r from-red-600 to-red-800 dark:bg-red-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                <X className="h-4 w-4 text-white" />
+                              </div>
+                              Reject
+                            </DropdownItem>
                           </Dropdown>
                         </div>
                       </TableCell>
@@ -291,7 +303,7 @@ export default function LoanContractListTable() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={14} className="text-center py-6 text-gray-500 dark:text-gray-400">
+                    <TableCell colSpan={14} className="text-center py-6">
                       No results found.
                     </TableCell>
                   </TableRow>
@@ -309,4 +321,4 @@ export default function LoanContractListTable() {
       />
     </div>
   );
-}
+};
