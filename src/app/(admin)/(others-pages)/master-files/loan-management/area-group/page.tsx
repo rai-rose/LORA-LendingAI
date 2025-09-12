@@ -1,6 +1,6 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import AreaGroupTable from "@/components/tables/loan-management/AreaGroup";
+import AreaGroupTable from "@/components/tables/master-files/loan-management/AreaGroup";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

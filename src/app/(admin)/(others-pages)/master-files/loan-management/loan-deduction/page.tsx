@@ -1,6 +1,6 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import LoanDeductionTable from "@/components/tables/loan-management/LoanDeduction";
+import LoanDeductionTable from "@/components/tables/master-files/loan-management/LoanDeduction";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

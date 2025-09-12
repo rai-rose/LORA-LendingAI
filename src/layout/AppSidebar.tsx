@@ -20,6 +20,8 @@ import {
   UserCog,
   Cog,
   History,
+  Users2,
+  FilesIcon,
 } from "lucide-react";
 
 type NavItem = {
@@ -49,13 +51,14 @@ const navItems: NavItem[] = [
     icon: <Users className="w-5 h-5" />,
     name: "Master Files",
     subItems: [
-      { name: "Loan Management", path: "/master-files/loan-management", icon: <Database className="w-4 h-4" /> },
+      { name: "Loan", path: "/master-files/loan-management", icon: <Database className="w-4 h-4" /> },
+      { name: "Human Resource", path: "/master-files/human-resource", icon: <Users2 className="w-4 h-4" /> },
     ],
   },
   {
     name: "Reports",
     icon: <List className="w-5 h-5" />,
-    subItems: [{ name: "Loan Reports", path: "/loan-reports", icon: <List className="w-4 h-4" /> }],
+    subItems: [{ name: "Loan Reports", path: "/reports/loan-reports", icon: <FilesIcon className="w-4 h-4" /> }],
   },
   {
     name: "Settings",

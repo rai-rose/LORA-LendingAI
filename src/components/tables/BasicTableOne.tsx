@@ -3,8 +3,10 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import LoadingSpinner from "@/components/ui/spinner/LoadingSpinner";
-import ActiveAccount from "./payments/BorrowersDetails";
-import LoanDetailsPage from "./loan-application-approval/LoanDetails";
+import ActiveAccount from "./loans/payments/BorrowersDetails";
+import LoanDetailsPage from "./loans/loan-application-approval/LoanDetails";
+import HumanResourceTable from "./master-files/human-resource/HumanResource";
+import LoanReportsTable from "./reports/loan-reports/LoanReports";
 
 interface BasicTableOneProps {
   activeMenu:
@@ -15,36 +17,38 @@ interface BasicTableOneProps {
     | "loan-contract-list"
     | "payments"
     | "loan-management"
+    | "human-resource"
+    | "loan-reports"
     | "user-settings"
     | "activity-logs"
     | "system";
 }
 
 // Lazy load each table (not loaded until needed)
-const LoanApplicationTable = dynamic(() => import("./loan-application/LoanApplication"), {
+const LoanApplicationTable = dynamic(() => import("./loans/loan-application/LoanApplication"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
 
 const LoanApplicationApprovalTable = dynamic(
-  () => import("./loan-application-approval/loanApplicationApproval"),
+  () => import("./loans/loan-application-approval/loanApplicationApproval"),
   {
     ssr: false,
     loading: () => <LoadingSpinner />,
   }
 );
 
-const LoanContractListTable = dynamic(() => import("./loan-contract-list/LoanContractList"), {
+const LoanContractListTable = dynamic(() => import("./loans/loan-contract-list/LoanContractList"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
 
-const PaymentsTable = dynamic(() => import("./payments/Payments"), {
+const PaymentsTable = dynamic(() => import("./loans/payments/Payments"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
 
-const LoanManagementTable = dynamic(() => import("./loan-management/LoanManagement"), {
+const LoanManagementTable = dynamic(() => import("./master-files/loan-management/LoanManagement"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
@@ -76,6 +80,8 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
       {activeMenu === "loan-contract-list" && <LoanContractListTable />}
       {activeMenu === "payments" && <PaymentsTable />}
       {activeMenu === "loan-management" && <LoanManagementTable />}
+      {activeMenu === "human-resource" && <HumanResourceTable />}
+      {activeMenu === "loan-reports" && <LoanReportsTable />}
       {activeMenu === "user-settings" && <UsersTable />}
       {activeMenu === "activity-logs" && <ActivityLogsTable />}
       {activeMenu === "system" && <SystemSettings />}

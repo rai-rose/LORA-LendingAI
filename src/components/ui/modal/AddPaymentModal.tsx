@@ -343,7 +343,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ isOpen, onClose, onSa
               <Label className="text-[#120695] dark:text-[#A5B4FC]">Loan Payment</Label>
               <Input
                 type="number"
-                step="0.01"
+                step={0.01}
                 name="loanPayment"
                 value={loanPayment ? totalAmount : "0.00"}
                 onChange={handleInputChange}
@@ -357,7 +357,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ isOpen, onClose, onSa
               <Label>Principal</Label>
               <Input
                 type="number"
-                step="0.01"
+                step={0.01}
                 name="principal"
                 value={principal}
                 onChange={handleInputChange}
@@ -371,7 +371,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ isOpen, onClose, onSa
               <Label>Total Interest</Label>
               <Input
                 type="number"
-                step="0.01"
+                step={0.01}
                 name="totalInterest"
                 value={totalInterest}
                 onChange={handleInputChange}
@@ -385,7 +385,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ isOpen, onClose, onSa
               <Label>Net Interest</Label>
               <Input
                 type="number"
-                step="0.01"
+                step={0.01}
                 name="netInterest"
                 value={netInterest}
                 onChange={handleInputChange}
@@ -399,7 +399,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ isOpen, onClose, onSa
               <Label>Tax Amount</Label>
               <Input
                 type="number"
-                step="0.01"
+                step={0.01}
                 name="taxAmount"
                 value={taxAmount}
                 onChange={handleInputChange}
@@ -415,7 +415,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ isOpen, onClose, onSa
               </Label>
               <Input
                 type="number"
-                step="0.01"
+                step={0.01}
                 name="earnedInterest"
                 value={earnedInterest}
                 onChange={handleInputChange}
@@ -443,7 +443,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ isOpen, onClose, onSa
             <Label className="text-blue-400 dark:text-blue-300">Accepted Payment/Withdrawn Amount</Label>
             <Input
               type="number"
-              step="0.01"
+              step={0.01}
               name="acceptedAmount"
               value={acceptedAmount}
               onChange={handleInputChange}
@@ -457,7 +457,7 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({ isOpen, onClose, onSa
             <Label className="text-red-600 dark:text-red-400">Change/Refundable</Label>
             <Input
               type="number"
-              step="0.01"
+              step={0.01}
               name="refundable"
               value={refundable}
               onChange={handleInputChange}

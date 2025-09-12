@@ -1,6 +1,6 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import TransactionTypeTable from "@/components/tables/loan-management/TransactionType";
+import TransactionTypeTable from "@/components/tables/master-files/loan-management/TransactionType";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
