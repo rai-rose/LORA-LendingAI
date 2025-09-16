@@ -224,7 +224,7 @@ export default function BorrowersDetailsTable() {
           <div className="grid grid-cols-1 gap-4">
             <p className="text-xs text-gray-600 dark:text-gray-300">
               <span className="font-medium">Principal Loan:</span>{" "}
-              <span className="font-bold text-lg">₱{formData.principalLoan}</span>
+              <span className="font-bold text-lg text-gray-600 dark:text-white">₱{formData.principalLoan}</span>
             </p>
             <p className="text-xs text-gray-600 dark:text-gray-300">
               <span className="font-medium">Unearned Interest Rate:</span>{" "}
@@ -315,7 +315,7 @@ export default function BorrowersDetailsTable() {
                     <TableCell className="px-4 py-3 text-gray-600 dark:text-gray-300 text-right text-xs">{tx.loanCharge}</TableCell>
                     <TableCell className="px-4 py-3 text-gray-600 dark:text-gray-300 text-right text-xs">{tx.loanPayment}</TableCell>
                     <TableCell className="px-4 py-3 text-gray-600 dark:text-gray-300 text-right text-xs">{tx.penaltyPay}</TableCell>
-                    <TableCell className="px-4 py-3 text-gray-600 dark:text-gray-300 text-right font-bold text-sm">{tx.lineTotal}</TableCell>
+                    <TableCell className="px-4 py-3 text-gray-600 dark:text-white text-right font-bold text-sm">{tx.lineTotal}</TableCell>
                     <TableCell className="px-4 py-3 text-gray-600 dark:text-gray-300 text-right text-xs">{tx.principalBal}</TableCell>
                     <TableCell className="px-4 py-3 text-gray-600 dark:text-gray-300 text-right text-xs">{tx.unearnedIntBal}</TableCell>
                     <TableCell className="px-4 py-3 text-gray-600 dark:text-gray-300 text-right text-xs">{tx.outstandingBal}</TableCell>

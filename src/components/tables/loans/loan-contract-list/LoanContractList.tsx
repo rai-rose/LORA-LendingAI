@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useState, useMemo } from "react";
@@ -12,7 +13,7 @@ import Badge from "../../../ui/badge/Badge";
 import Image from "next/image";
 import * as XLSX from "xlsx";
 import { getActions, tableData } from "../../utils";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Eye, Edit, Check, X } from "lucide-react";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import Pagination from "@/components/tables/Pagination";
@@ -20,7 +21,7 @@ import Pagination from "@/components/tables/Pagination";
 export default function LoanContractListTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [openDropdownId, setOpenDropdownId] = useState(null); // Use number | null to match PaymentsTable
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -41,7 +42,7 @@ export default function LoanContractListTable() {
         const isApproved = order.loanApplied && validStatuses.includes(order.status);
         return matchesSearch && matchesStatus && isApproved;
       });
-  }, [searchQuery, statusFilter]);
+  }, [searchQuery, statusFilter, validStatuses]);
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -95,7 +96,7 @@ export default function LoanContractListTable() {
     XLSX.writeFile(workbook, "loan_contract_list.xlsx"); // Use writeFile to match PaymentsTable
   };
 
-  const toggleDropdown = (id) => {
+  const toggleDropdown = (id: number) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
@@ -241,8 +242,8 @@ export default function LoanContractListTable() {
                               : order.status === "Deceased"
                               ? "error"
                               : order.status === "Closed Account"
-                              ? "secondary"
-                              : "default"
+                              ? "primary"
+                              : "primary"
                           }
                         >
                           {order.status}
@@ -253,8 +254,6 @@ export default function LoanContractListTable() {
                           <button
                             className="dropdown-toggle focus:outline-none p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
                             onClick={() => toggleDropdown(order.id)}
-                            aria-label={`Actions for loan ${order.loanId}`}
-                            aria-expanded={openDropdownId === order.id}
                           >
                             <Ellipsis className="h-4 w-4 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-100 transition-colors duration-150" />
                           </button>
@@ -263,27 +262,42 @@ export default function LoanContractListTable() {
                             onClose={() => setOpenDropdownId(null)}
                             className="w-48 rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800 transition-colors duration-200"
                           >
-                            {Array.isArray(order.actions) && order.actions.length > 0 ? (
-                              order.actions.map((action, index) => (
-                                <DropdownItem
-                                  key={index}
-                                  className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                                  onItemClick={() => {
-                                    action.onClick();
-                                    setOpenDropdownId(null);
-                                  }}
-                                >
-                                  {action.label}
-                                </DropdownItem>
-                              ))
-                            ) : (
-                              <DropdownItem
-                                className="text-black dark:text-white text-sm px-4 py-2.5"
-                                onItemClick={() => setOpenDropdownId(null)}
-                              >
-                                No actions available
-                              </DropdownItem>
-                            )}
+                            <DropdownItem
+                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                              onItemClick={() => setOpenDropdownId(null)}
+                            >
+                              <div className="bg-gradient-to-r from-gray-600 to-gray-800 dark:bg-gray-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                <Eye className="h-4 w-4 text-white" />
+                              </div>
+                              View Details
+                            </DropdownItem>
+                            <DropdownItem
+                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                              onItemClick={() => setOpenDropdownId(null)}
+                            >
+                              <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                <Edit className="h-4 w-4 text-white" />
+                              </div>
+                              Edit
+                            </DropdownItem>
+                            <DropdownItem
+                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                              onItemClick={() => setOpenDropdownId(null)}
+                            >
+                              <div className="bg-gradient-to-r from-green-600 to-green-800 dark:bg-green-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                <Check className="h-4 w-4 text-white" />
+                              </div>
+                              Approve
+                            </DropdownItem>
+                            <DropdownItem
+                              className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                              onItemClick={() => setOpenDropdownId(null)}
+                            >
+                              <div className="bg-gradient-to-r from-red-600 to-red-800 dark:bg-red-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                <X className="h-4 w-4 text-white" />
+                              </div>
+                              Reject
+                            </DropdownItem>
                           </Dropdown>
                         </div>
                       </TableCell>
