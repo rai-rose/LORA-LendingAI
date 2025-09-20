@@ -25,6 +25,30 @@ export default function SignInForm() {
     }));
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({...formData, isKeepLoggedIn: isChecked}),
+    })
+
+    const data = await response.json();
+
+    const { success, message } = data;
+
+    if (!success) {
+      console.log(message);
+      return;
+    }
+
+    // Refresh the page if success to apply changes
+    window.location.reload();
+  };
+
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
@@ -98,7 +122,7 @@ export default function SignInForm() {
                 </span>
               </div>
             </div>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="space-y-6">
                 <div>
                   <Label>
@@ -110,6 +134,7 @@ export default function SignInForm() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
+                    required={true}
                   />
                 </div>
                 <div>
@@ -123,6 +148,7 @@ export default function SignInForm() {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
+                      required={true}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
