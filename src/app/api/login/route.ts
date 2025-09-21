@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
         path: "/",
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 // 1 Hour expiry
       });
     } else {
       cookieStore.set({
