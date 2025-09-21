@@ -1,15 +1,11 @@
 "use client";
 
-import React from 'react';
-import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from "next/navigation";
 
-// This is an AuthProvider
+// This is an AuthProvider for Signin/Signup Pages
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const pathname = usePathname();
-
-  const [showChildren, setShowChildren] = useState(false);
 
   useEffect(() => {
     const onLoad = async () => {
@@ -17,30 +13,16 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await isAuth.json();
 
       if (response.success) {
-        setShowChildren(true);
-        
-        if (pathname === "/signin" || pathname === "/signup") { 
-          setShowChildren(false);
-          router.push("/");
-        }
-      }
-
-      if (!response.success) {
-        setShowChildren(false);
-        router.push("/signin");
-
-        if (pathname === "/signin" || pathname === "/signup") {
-          setShowChildren(true);
-        }
-      }
+        router.push("/");
+      } 
     }
 
     onLoad();
-  }, [router, pathname]);
+  }, [router]);
 
   return (
     <>
-    {showChildren && children}
+      { children }
     </>
   );
 }
