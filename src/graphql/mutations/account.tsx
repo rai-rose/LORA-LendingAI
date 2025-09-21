@@ -10,4 +10,14 @@ const LOGIN_ACCOUNT = gql`
   }
 `;
 
-export { LOGIN_ACCOUNT };
+const CREATE_ACCOUNT = gql`
+  mutation CreateAccountWeb($data: CreateAccountAdminInput) {
+    createAccountWeb(data: $data) {
+      success
+      message
+      token
+    }
+  }
+`;
+
+export { LOGIN_ACCOUNT, CREATE_ACCOUNT };

@@ -26,6 +26,31 @@ export default function SignUpForm() {
     }));
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (isChecked) {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({...formData}),
+      })
+
+      const data = await response.json();
+
+      const { success, message } = data;
+
+      if (!success) {
+        console.log(message);
+        return;
+      }
+
+      window.location.reload();
+    }
+  }
+
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full overflow-y-auto no-scrollbar">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
@@ -99,7 +124,7 @@ export default function SignUpForm() {
                 </span>
               </div>
             </div>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="space-y-5">
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   {/* <!-- First Name --> */}
@@ -114,6 +139,7 @@ export default function SignUpForm() {
                       placeholder="Enter your first name"
                       value={formData.fname}
                       onChange={handleInputChange}
+                      required={true}
                     />
                   </div>
                   {/* <!-- Last Name --> */}
@@ -128,6 +154,7 @@ export default function SignUpForm() {
                       placeholder="Enter your last name"
                       value={formData.lname}
                       onChange={handleInputChange}
+                      required={true}
                     />
                   </div>
                 </div>
@@ -143,6 +170,7 @@ export default function SignUpForm() {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleInputChange}
+                    required={true}
                   />
                 </div>
                 {/* <!-- Password --> */}
@@ -157,6 +185,7 @@ export default function SignUpForm() {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
+                      required={true}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -190,7 +219,7 @@ export default function SignUpForm() {
                 </div>
                 {/* <!-- Button --> */}
                 <div>
-                  <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+                  <button className={`flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg shadow-theme-xs ${isChecked ? "bg-brand-500 hover:bg-brand-600" : "bg-gray-500 cursor-default"}`}>
                     Sign Up
                   </button>
                 </div>
