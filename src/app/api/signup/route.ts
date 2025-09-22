@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     const { data } = await client.mutate<{createAccountWeb: { success: boolean, message: string, token: string }}>({
       mutation: CREATE_ACCOUNT,
       variables: {
-        data: signupData
+        data: {...signupData, role: "ADMIN"}
       },
       fetchPolicy: "no-cache"
     })
