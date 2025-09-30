@@ -22,6 +22,8 @@ import {
   History,
   Users2,
   FilesIcon,
+  Tags,
+  ChartCandlestick,
 } from "lucide-react";
 
 type NavItem = {
@@ -58,7 +60,11 @@ const navItems: NavItem[] = [
   {
     name: "Reports",
     icon: <List className="w-5 h-5" />,
-    subItems: [{ name: "Loan Reports", path: "/reports/loan-reports", icon: <FilesIcon className="w-4 h-4" /> }],
+    subItems: [
+      { name: "Loan Reports", path: "/reports/loan-reports", icon: <FilesIcon className="w-4 h-4" /> },
+      { name: "Accounting Reports", path: "/reports/accounting-reports", icon: <ChartCandlestick className="w-4 h-4" /> },
+      { name: "Inventory Reports", path: "/reports/inventory-reports", icon: <Tags className="w-4 h-4" /> },
+    ],
   },
   {
     name: "Settings",
