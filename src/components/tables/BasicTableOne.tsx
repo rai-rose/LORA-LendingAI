@@ -7,6 +7,8 @@ import ActiveAccount from "./loans/payments/BorrowersDetails";
 import LoanDetailsPage from "./loans/loan-application-approval/LoanDetails";
 import HumanResourceTable from "./master-files/human-resource/HumanResource";
 import LoanReportsTable from "./reports/loan-reports/LoanReports";
+import InventoryReportsList from "./reports/inventory-reports/InventoryReports";
+import AccountingReportsList from "./reports/accounting-reports/AccountingReports";
 
 interface BasicTableOneProps {
   activeMenu:
@@ -21,6 +23,8 @@ interface BasicTableOneProps {
     | "inventory-management"
     | "human-resource"
     | "loan-reports"
+    | "accounting-reports"
+    | "inventory-reports"
     | "user-settings"
     | "activity-logs"
     | "system";
@@ -96,6 +100,8 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
       {activeMenu === "inventory-management" && <InventoryManagementTable />}
       {activeMenu === "human-resource" && <HumanResourceTable />}
       {activeMenu === "loan-reports" && <LoanReportsTable />}
+      {activeMenu === "accounting-reports" && <AccountingReportsList />}
+      {activeMenu === "inventory-reports" && <InventoryReportsList />}
       {activeMenu === "user-settings" && <UsersTable />}
       {activeMenu === "activity-logs" && <ActivityLogsTable />}
       {activeMenu === "system" && <SystemSettings />}
