@@ -51,13 +51,6 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <Archive className="w-5 h-5" />,
-    name: "Inventory",
-    subItems: [
-      { name: "Purchase Request", path: "/inventory/purchase-request", icon: <FileText className="w-4 h-4" /> },
-    ]
-  },
-  {
     icon: <File className="w-5 h-5" />,
     name: "Master Files",
     subItems: [
