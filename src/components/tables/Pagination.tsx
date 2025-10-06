@@ -10,9 +10,9 @@ type PaginationProps = {
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalItems,
+  itemsPerPage,
   onPageChange,
 }) => {
-  const itemsPerPage = 10;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
   const indexOfLastItem = Math.min(indexOfFirstItem + itemsPerPage, totalItems);

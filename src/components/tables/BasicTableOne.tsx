@@ -16,7 +16,9 @@ interface BasicTableOneProps {
     | "borrowers-details"
     | "loan-contract-list"
     | "payments"
+    | "purchase-request"
     | "loan-management"
+    | "inventory-management"
     | "human-resource"
     | "loan-reports"
     | "user-settings"
@@ -48,7 +50,17 @@ const PaymentsTable = dynamic(() => import("./loans/payments/Payments"), {
   loading: () => <LoadingSpinner />,
 });
 
+const PurchaseRequestTable = dynamic(() => import("./inventory/purchase-request/PurchaseRequest"), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+
 const LoanManagementTable = dynamic(() => import("./master-files/loan-management/LoanManagement"), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+
+const InventoryManagementTable = dynamic(() => import("./master-files/inventory-management/InventoryManagement"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
@@ -79,7 +91,9 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
       {activeMenu === "borrowers-details" && <ActiveAccount />}
       {activeMenu === "loan-contract-list" && <LoanContractListTable />}
       {activeMenu === "payments" && <PaymentsTable />}
+      {activeMenu === "purchase-request" && <PurchaseRequestTable />}
       {activeMenu === "loan-management" && <LoanManagementTable />}
+      {activeMenu === "inventory-management" && <InventoryManagementTable />}
       {activeMenu === "human-resource" && <HumanResourceTable />}
       {activeMenu === "loan-reports" && <LoanReportsTable />}
       {activeMenu === "user-settings" && <UsersTable />}

@@ -5,10 +5,11 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
+  Archive,
   LayoutDashboard,
   File,
   ChevronDown,
-  Users,
+  FileChartColumn ,
   List,
   Settings,
   MoreHorizontal,
@@ -20,7 +21,7 @@ import {
   UserCog,
   Cog,
   History,
-  Users2,
+  Users,
   FilesIcon,
 } from "lucide-react";
 
@@ -38,7 +39,7 @@ const navItems: NavItem[] = [
     path: "/",
   },
   {
-    icon: <File className="w-5 h-5" />,
+    icon: <FileChartColumn className="w-5 h-5" />,
     name: "Loans",
     subItems: [
       { name: "Applications", path: "/loans/loan-application", icon: <FileText className="w-4 h-4" /> },
@@ -48,11 +49,19 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <Users className="w-5 h-5" />,
+    icon: <Archive className="w-5 h-5" />,
+    name: "Inventory",
+    subItems: [
+      { name: "Purchase Request", path: "/inventory/purchase-request", icon: <FileText className="w-4 h-4" /> },
+    ]
+  },
+  {
+    icon: <File className="w-5 h-5" />,
     name: "Master Files",
     subItems: [
       { name: "Loan", path: "/master-files/loan-management", icon: <Database className="w-4 h-4" /> },
-      { name: "Human Resource", path: "/master-files/human-resource", icon: <Users2 className="w-4 h-4" /> },
+      { name: "Inventory", path: "/master-files/inventory-management", icon: <Archive className="w-4 h-4" /> },
+      { name: "Human Resource", path: "/master-files/human-resource", icon: <Users className="w-4 h-4" /> },
     ],
   },
   {

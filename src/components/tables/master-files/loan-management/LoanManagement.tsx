@@ -27,7 +27,7 @@ const loanData: LoanModule[] = [
 export default function LoanManagementList() {
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
-  const itemsPerPage = 10;
+  const itemsPerPage = 11;
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;

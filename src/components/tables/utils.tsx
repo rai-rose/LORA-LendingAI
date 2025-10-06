@@ -2,6 +2,40 @@ import React from "react";
 import { FiEye, FiEdit, FiCheckCircle } from "react-icons/fi";
 import { LiaTimesCircle } from "react-icons/lia";
 
+export interface LoanType {
+  id: number;
+  code: string;
+  description: string;
+  format: string;
+  series: string;
+}
+
+export const loanData: LoanType[] = [
+  { id: 1, code: "BAC-AL", description: "Additional Loan", format: "BAC-AL-{0:0000000}", series: "7" },
+  { id: 2, code: "BAC-EL", description: "Extension Loan", format: "BAC-EL-{0:0000000}", series: "23" },
+  { id: 3, code: "BAC-LL", description: "Liquidation Loan", format: "BAC-LL-{0:0000000}", series: "46" },
+  { id: 4, code: "BAC-NL", description: "New Loan", format: "BAC-NL-{0:0000000}", series: "15" },
+  { id: 5, code: "BAC-RL", description: "ReLoan", format: "BAC-RL-{0:0000000}", series: "97" },
+  { id: 6, code: "BAC-XB", description: "Bonus Loan", format: "BAC-XB-{0:0000000}", series: "19" },
+  { id: 7, code: "BUT-AL", description: "Additional Loan", format: "BUT-AL-{0:0000000}", series: "6" },
+  { id: 8, code: "BUT-EL", description: "Extension Loan", format: "BUT-EL-{0:0000000}", series: "23" },
+  { id: 9, code: "BUT-LL", description: "Liquidation Loan", format: "BUT-LL-{0:0000000}", series: "67" },
+  { id: 10, code: "BUT-NL", description: "New Loan", format: "BUT-NL-{0:0000000}", series: "34" },
+  { id: 11, code: "BUT-RL", description: "ReLoan", format: "BUT-RL-{0:0000000}", series: "59" },
+  { id: 12, code: "BUT-XB", description: "Bonus Loan", format: "BUT-XB-{0:0000000}", series: "11" },
+  { id: 13, code: "CAG-AL", description: "Additional Loan", format: "CAG-AL-{0:0000000}", series: "17" },
+  { id: 14, code: "CAG-EL", description: "Extension Loan", format: "CAG-EL-{0:0000000}", series: "47" },
+  { id: 15, code: "CAG-LL", description: "Liquidation Loan", format: "CAG-LL-{0:0000000}", series: "27" },
+  { id: 16, code: "CAG-NL", description: "New Loan", format: "CAG-NL-{0:0000000}", series: "29" },
+  { id: 17, code: "CAG-RL", description: "ReLoan", format: "CAG-RL-{0:0000000}", series: "28" },
+  { id: 18, code: "CAG-XB", description: "Bonus Loan", format: "CAG-XB-{0:0000000}", series: "8" },
+  { id: 19, code: "DAV-AL", description: "Additional Loan", format: "DAV-AL-{0:0000000}", series: "9" },
+  { id: 20, code: "DAV-EL", description: "Extension Loan", format: "DAV-EL-{0:0000000}", series: "90" },
+  { id: 21, code: "DAV-LL", description: "Liquidation Loan", format: "DAV-LL-{0:0000000}", series: "78" },
+  { id: 22, code: "DAV-NL", description: "New Loan", format: "DAV-NL-{0:0000000}", series: "30" },
+  { id: 23, code: "DAV-RL", description: "ReLoan", format: "DAV-RL-{0:0000000}", series: "33" },
+];
+
 export interface Order {
   id: number;
   user: {
