@@ -8,6 +8,8 @@ import PurchaseTransactions from "./inventory/purchase-transactions/PurchaseTran
 import StockTransactions from "./inventory/stock-transactions/StockTransactions";
 import LoanDetailsPage from "./loans/loan-application-approval/LoanDetails";
 import HumanResourceTable from "./master-files/human-resource/HumanResource";
+import AccountingMasterFiles from "./master-files/accounting/Accounting";
+import InventoryMasterFiles from "./master-files/inventory/Inventory";
 import LoanReportsTable from "./reports/loan-reports/LoanReports";
 import InventoryReportsList from "./reports/inventory-reports/InventoryReports";
 import AccountingReportsList from "./reports/accounting-reports/AccountingReports";
@@ -26,6 +28,8 @@ interface BasicTableOneProps {
     | "stock-transactions"
     | "loan-management"
     | "inventory-management"
+    | "accounting"
+    | "inventory"
     | "human-resource"
     | "loan-reports"
     | "accounting-reports"
@@ -111,6 +115,8 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
       {activeMenu === "stock-transactions" && <StockTransactions />}
       {activeMenu === "loan-management" && <LoanManagementTable />}
       {activeMenu === "inventory-management" && <InventoryManagementTable />}
+      {activeMenu === "accounting" && <AccountingMasterFiles />}
+      {activeMenu === "inventory" && <InventoryMasterFiles />}
       {activeMenu === "human-resource" && <HumanResourceTable />}
       {activeMenu === "loan-reports" && <LoanReportsTable />}
       {activeMenu === "accounting-reports" && <AccountingReportsList />}

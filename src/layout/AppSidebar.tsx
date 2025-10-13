@@ -27,6 +27,8 @@ import {
   ChartCandlestick,
   FileChartLine,
   FileCheck,
+  Calculator,
+  Package,
 } from "lucide-react";
 
 type NavItem = {
@@ -64,6 +66,8 @@ const navItems: NavItem[] = [
     icon: <File className="w-5 h-5" />,
     name: "Master Files",
     subItems: [
+      { name: "Accounting", path: "/master-files/accounting", icon: <Calculator className="w-4 h-4" /> },
+      { name: "Inventory", path: "/master-files/inventory", icon: <Package className="w-4 h-4" /> },
       { name: "Loan", path: "/master-files/loan-management", icon: <Database className="w-4 h-4" /> },
       { name: "Inventory", path: "/master-files/inventory-management", icon: <Archive className="w-4 h-4" /> },
       { name: "Human Resource", path: "/master-files/human-resource", icon: <Users className="w-4 h-4" /> },
