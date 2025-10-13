@@ -6,6 +6,8 @@ import LoadingSpinner from "@/components/ui/spinner/LoadingSpinner";
 import ActiveAccount from "./loans/payments/BorrowersDetails";
 import LoanDetailsPage from "./loans/loan-application-approval/LoanDetails";
 import HumanResourceTable from "./master-files/human-resource/HumanResource";
+import AccountingMasterFiles from "./master-files/accounting/Accounting";
+import InventoryMasterFiles from "./master-files/inventory/Inventory";
 import LoanReportsTable from "./reports/loan-reports/LoanReports";
 import InventoryReportsList from "./reports/inventory-reports/InventoryReports";
 import AccountingReportsList from "./reports/accounting-reports/AccountingReports";
@@ -19,6 +21,8 @@ interface BasicTableOneProps {
     | "loan-contract-list"
     | "payments"
     | "loan-management"
+    | "accounting"
+    | "inventory"
     | "human-resource"
     | "loan-reports"
     | "accounting-reports"
@@ -84,6 +88,8 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
       {activeMenu === "loan-contract-list" && <LoanContractListTable />}
       {activeMenu === "payments" && <PaymentsTable />}
       {activeMenu === "loan-management" && <LoanManagementTable />}
+      {activeMenu === "accounting" && <AccountingMasterFiles />}
+      {activeMenu === "inventory" && <InventoryMasterFiles />}
       {activeMenu === "human-resource" && <HumanResourceTable />}
       {activeMenu === "loan-reports" && <LoanReportsTable />}
       {activeMenu === "accounting-reports" && <AccountingReportsList />}
