@@ -38,7 +38,7 @@ export default function AccountingMasterFiles() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const router = useRouter();
-  const itemsPerPage = 10;
+  const itemsPerPage = 15;
 
   const filteredData = useMemo(() => {
     if (selectedCategory === "All") {

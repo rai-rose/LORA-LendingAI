@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Pagination from "@/components/tables/Pagination";
+import BarcodePrints from "./BarcodePrints";
 
 interface InventoryModule {
   id: number;
@@ -41,7 +42,7 @@ export default function InventoryMasterFiles() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const router = useRouter();
-  const itemsPerPage = 10;
+  const itemsPerPage = 15;
 
   const filteredData = useMemo(() => {
     if (selectedCategory === "All") {
@@ -124,6 +125,12 @@ export default function InventoryMasterFiles() {
           </div>
         </div>
       </div>
+
+      <BarcodePrints barcodes={[
+        { img: "/images/barcode.png", title: "Print Item Barcode" },
+        { img: "/images/barcode.png", title: "Print Item Barcode 2" },
+        { img: "/images/barcode.png", title: "Print Barcode Per Branch" },
+      ]} />
 
       <Pagination
         currentPage={currentPage}

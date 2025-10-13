@@ -8,8 +8,6 @@ import PurchaseTransactions from "./inventory/purchase-transactions/PurchaseTran
 import StockTransactions from "./inventory/stock-transactions/StockTransactions";
 import LoanDetailsPage from "./loans/loan-application-approval/LoanDetails";
 import HumanResourceTable from "./master-files/human-resource/HumanResource";
-import AccountingMasterFiles from "./master-files/accounting/Accounting";
-import InventoryMasterFiles from "./master-files/inventory/Inventory";
 import LoanReportsTable from "./reports/loan-reports/LoanReports";
 import InventoryReportsList from "./reports/inventory-reports/InventoryReports";
 import AccountingReportsList from "./reports/accounting-reports/AccountingReports";
@@ -27,7 +25,6 @@ interface BasicTableOneProps {
     | "purchase-order"
     | "stock-transactions"
     | "loan-management"
-    | "inventory-management"
     | "accounting"
     | "inventory"
     | "human-resource"
@@ -78,7 +75,12 @@ const LoanManagementTable = dynamic(() => import("./master-files/loan-management
   loading: () => <LoadingSpinner />,
 });
 
-const InventoryManagementTable = dynamic(() => import("./master-files/inventory-management/InventoryManagement"), {
+const AccountingMasterFiles = dynamic(() => import("./master-files/accounting/Accounting"), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+
+const InventoryMasterFiles = dynamic(() => import("./master-files/inventory/Inventory"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
@@ -114,7 +116,6 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
       {activeMenu === "purchase-order" && <PurchaseOrder />}
       {activeMenu === "stock-transactions" && <StockTransactions />}
       {activeMenu === "loan-management" && <LoanManagementTable />}
-      {activeMenu === "inventory-management" && <InventoryManagementTable />}
       {activeMenu === "accounting" && <AccountingMasterFiles />}
       {activeMenu === "inventory" && <InventoryMasterFiles />}
       {activeMenu === "human-resource" && <HumanResourceTable />}
