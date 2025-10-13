@@ -4,6 +4,8 @@ import React from "react";
 import dynamic from "next/dynamic";
 import LoadingSpinner from "@/components/ui/spinner/LoadingSpinner";
 import ActiveAccount from "./loans/payments/BorrowersDetails";
+import PurchaseTransactions from "./inventory/purchase-transactions/PurchaseTransactions";
+import StockTransactions from "./inventory/stock-transactions/StockTransactions";
 import LoanDetailsPage from "./loans/loan-application-approval/LoanDetails";
 import HumanResourceTable from "./master-files/human-resource/HumanResource";
 import LoanReportsTable from "./reports/loan-reports/LoanReports";
@@ -18,7 +20,10 @@ interface BasicTableOneProps {
     | "borrowers-details"
     | "loan-contract-list"
     | "payments"
+    | "purchase-transactions"
     | "purchase-request"
+    | "purchase-order"
+    | "stock-transactions"
     | "loan-management"
     | "inventory-management"
     | "human-resource"
@@ -54,7 +59,12 @@ const PaymentsTable = dynamic(() => import("./loans/payments/Payments"), {
   loading: () => <LoadingSpinner />,
 });
 
-const PurchaseRequestTable = dynamic(() => import("./inventory/purchase-request/PurchaseRequest"), {
+const PurchaseRequest = dynamic(() => import("./inventory/purchase-transactions/purchase-request/PurchaseRequest"), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+
+const PurchaseOrder = dynamic(() => import("./inventory/purchase-transactions/purchase-order/PurchaseOrder"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
@@ -95,7 +105,10 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
       {activeMenu === "borrowers-details" && <ActiveAccount />}
       {activeMenu === "loan-contract-list" && <LoanContractListTable />}
       {activeMenu === "payments" && <PaymentsTable />}
-      {activeMenu === "purchase-request" && <PurchaseRequestTable />}
+      {activeMenu === "purchase-transactions" && <PurchaseTransactions />}
+      {activeMenu === "purchase-request" && <PurchaseRequest />}
+      {activeMenu === "purchase-order" && <PurchaseOrder />}
+      {activeMenu === "stock-transactions" && <StockTransactions />}
       {activeMenu === "loan-management" && <LoanManagementTable />}
       {activeMenu === "inventory-management" && <InventoryManagementTable />}
       {activeMenu === "human-resource" && <HumanResourceTable />}

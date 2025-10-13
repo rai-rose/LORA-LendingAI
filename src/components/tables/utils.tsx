@@ -63,6 +63,67 @@ export interface Order {
   dueDate?: string;
 }
 
+export interface PurchaseRequest {
+  id: number;
+  prNumber: string;
+  poNumber: string;
+  referenceNumber: string;
+  prDate: string;
+  dateNeeded: string;
+  recipient: {
+    image: string;
+    name: string;
+    role: string;
+  };
+  status: string;
+  requestedBy: string;
+  transactionDate: string;
+  transactionTime: string;
+  costCenter: string;
+  subCostCenter: string;
+}
+
+export const purchaseRequestData: PurchaseRequest[] = [
+  {
+    id: 1,
+    prNumber: "PR-1001",
+    poNumber: "PO-2001",
+    referenceNumber: "REF-3001",
+    prDate: "2025-07-01",
+    dateNeeded: "2025-07-10",
+    recipient: {
+      image: "/images/user/user-19.jpg",
+      name: "John Doe",
+      role: "Developer",
+    },
+    status: "Cancelled",
+    requestedBy: "-",
+    transactionDate: "2025-07-01",
+    transactionTime: "10:30 AM",
+    costCenter: "Marketing",
+    subCostCenter: "Digital Marketing",
+  },
+  {
+    id: 2,
+    prNumber: "PR-1002",
+    poNumber: "PO-2102",
+    referenceNumber: "REF-3023",
+    prDate: "2023-07-01",
+    dateNeeded: "2025-07-10",
+    recipient: {
+      image: "/images/user/user-17.jpg",
+      name: "Lindsey Curtis",
+      role: "Web Designer",
+    },
+    status: "Active",
+    requestedBy: "-",
+    transactionDate: "2023-07-01",
+    transactionTime: "10:30 AM",
+    costCenter: "Marketing",
+    subCostCenter: "Digital Marketing",
+  }
+];
+
 export const tableData: Order[] = [
   {
     id: 1,

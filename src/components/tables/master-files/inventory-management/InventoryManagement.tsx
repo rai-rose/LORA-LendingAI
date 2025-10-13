@@ -77,8 +77,8 @@ interface InventoryModule {
                 </div>
             </div>
             <BarcodePrints barcodes={[
-                { img: "/images/barcode.png", title: "Print Barcode" },
-                { img: "/images/barcode.png", title: "Print Barcode 2" },
+                { img: "/images/barcode.png", title: "Print Item Barcode" },
+                { img: "/images/barcode.png", title: "Print Item Barcode 2" },
                 { img: "/images/barcode.png", title: "Print Barcode Per Branch" },
             ]} />
             <Pagination

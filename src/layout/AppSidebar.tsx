@@ -25,6 +25,8 @@ import {
   FilesIcon,
   Tags,
   ChartCandlestick,
+  FileChartLine,
+  FileCheck,
 } from "lucide-react";
 
 type NavItem = {
@@ -48,6 +50,14 @@ const navItems: NavItem[] = [
       { name: "Approval", path: "/loans/loan-application-approval", icon: <CheckCircle className="w-4 h-4" /> },
       { name: "Active Contracts", path: "/loans/loan-contract-list", icon: <ClipboardList className="w-4 h-4" /> },
       { name: "Payments", path: "/loans/payments", icon: <PhilippinePeso className="w-4 h-4" /> },
+    ],
+  },
+  {
+    icon: <Archive className="w-5 h-5" />,
+    name: "Inventory",
+    subItems: [
+      { name: "Purchase Transactions", path: "/inventory/purchase-transactions", icon: <FileCheck className="w-4 h-4" /> },
+      { name: "Stock Transactions", path: "/inventory/stock-transactions", icon: <FileChartLine className="w-4 h-4" /> },
     ],
   },
   {
