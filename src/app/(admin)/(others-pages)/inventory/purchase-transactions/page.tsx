@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function PurchaseTransactions() {
     return (
         <div>
-            <PageBreadcrumb pageTitle="Purchase Transactions Entries" />
+            <PageBreadcrumb pageTitle="Purchase Transactions" />
             <div className="space-y-6">
                 <ComponentCard title="Manage and View Purchase Transactions">
                     <BasicTableOne activeMenu="purchase-transactions" />

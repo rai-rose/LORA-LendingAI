@@ -29,6 +29,8 @@ import {
   FileCheck,
   Calculator,
   Package,
+  NotebookPen,
+  BookOpenText,
 } from "lucide-react";
 
 type NavItem = {
@@ -43,6 +45,13 @@ const navItems: NavItem[] = [
     icon: <LayoutDashboard className="w-5 h-5" />,
     name: "Dashboard",
     path: "/",
+  },
+  {
+    icon: <NotebookPen className="w-5 h-5" />,
+    name: "Accounting",
+    subItems: [
+      { name: "Journal Entries", path: "/accounting/journal-entries", icon: <BookOpenText className="w-4 h-4" /> },
+    ],
   },
   {
     icon: <FileChartColumn className="w-5 h-5" />,
@@ -67,8 +76,8 @@ const navItems: NavItem[] = [
     name: "Master Files",
     subItems: [
       { name: "Accounting", path: "/master-files/accounting", icon: <Calculator className="w-4 h-4" /> },
-      { name: "Inventory", path: "/master-files/inventory", icon: <Package className="w-4 h-4" /> },
       { name: "Loan", path: "/master-files/loan-management", icon: <Database className="w-4 h-4" /> },
+      { name: "Inventory", path: "/master-files/inventory", icon: <Package className="w-4 h-4" /> },
       { name: "Human Resource", path: "/master-files/human-resource", icon: <Users className="w-4 h-4" /> },
     ],
   },

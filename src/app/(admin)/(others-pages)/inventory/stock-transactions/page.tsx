@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function StockTransactions() {
     return (
         <div>
-            <PageBreadcrumb pageTitle="Stock Transactions Entries" />
+            <PageBreadcrumb pageTitle="Stock Transactions" />
             <div className="space-y-6">
                 <ComponentCard title="Manage and View Stock Transactions">
                     <BasicTableOne activeMenu="stock-transactions" />

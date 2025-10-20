@@ -12,33 +12,30 @@ import {
 import Badge from "../../../../ui/badge/Badge";
 import Image from "next/image";
 import * as XLSX from "xlsx";
-import { purchaseRequestData } from "../../../utils";
-import type { PurchaseRequest } from "../../../utils";
-import { Ellipsis, Edit, ArrowLeft, Trash2 } from "lucide-react";
+import { stockAdjustmentData } from "../../../utils";
+import { Ellipsis, Edit, ArrowLeft } from "lucide-react";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import Pagination from "@/components/tables/Pagination";
 import CreatePurchaseRequestModal from "@/components/ui/modal/CreatePurchaseRequestModal";
 
-export default function PurchaseRequest() {
+export default function StockAdjustment() {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
-    const [minRequestDate, setMinRequestDate] = useState("");
-    const [maxRequestDate, setMaxRequestDate] = useState("");
+    const [minDate, setMinDate] = useState("");
+    const [maxDate, setMaxDate] = useState("");
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [dataList, setDataList] = useState<PurchaseRequest[]>(purchaseRequestData);
-    const [editingItem, setEditingItem] = useState<PurchaseRequest | null>(null);
     const router = useRouter();
     const itemsPerPage = 15;
 
-    const validStatuses = ["Active", "Cancelled"];
+    const validStatuses = ["Approved"];
 
     const filteredData = useMemo(() => {
-        return dataList
+        return stockAdjustmentData
         .filter((data) => {
-            const matchesSearch = data.recipient.name
+            const matchesSearch = data.user.name
             .toLowerCase()
             .includes(searchQuery.toLowerCase());
             const matchesStatus =
@@ -46,18 +43,18 @@ export default function PurchaseRequest() {
             return matchesSearch && matchesStatus;
         })
         .filter((data) => {
-            if (minRequestDate && data.dateNeeded) {
-                return new Date(data.dateNeeded) >= new Date(minRequestDate);
+            if (minDate && data.adjDate) {
+                return new Date(data.adjDate) >= new Date(minDate);
             }
             return true;
         })
         .filter((data) => {
-            if (maxRequestDate && data.dateNeeded) {
-                return new Date(data.dateNeeded) <= new Date(maxRequestDate);
+            if (maxDate && data.adjDate) {
+                return new Date(data.adjDate) <= new Date(maxDate);
             }
             return true;
         });
-    }, [searchQuery, statusFilter, validStatuses, minRequestDate, maxRequestDate, dataList]);
+    }, [searchQuery, statusFilter, validStatuses, minDate, maxDate]);
 
     const paginatedData = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -65,107 +62,50 @@ export default function PurchaseRequest() {
         return filteredData.slice(startIndex, endIndex);
     }, [filteredData, currentPage]);
 
-    const handleOpenCreateModal = () => {
-        setShowCreateModal(true);
-        setOpenDropdownId(null);
+    const handleAddNewAdjustment = () => {
+        window.alert("Add New Stock Adjustment action triggered");
     };
 
-    const handleSaveNewPurchaseRequest = (data: any) => {
-        const now = new Date();
-        const transactionDate = now.toISOString().split("T")[0];
-        const transactionTime = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-        if (editingItem) {
-            setDataList(prev => prev.map(item => {
-                if (item.id === editingItem.id) {
-                    return {
-                        ...item,
-                        prNumber: data.prNumber || item.prNumber,
-                        referenceNumber: data.referenceNumber || item.referenceNumber,
-                        prDate: data.requestDate || item.prDate,
-                        dateNeeded: data.dateNeeded || item.dateNeeded,
-                        requestedBy: data.requestedBy || item.requestedBy,
-                        costCenter: data.costCenter || item.costCenter,
-                        subCostCenter: data.subCostCenter || item.subCostCenter,
-                    } as PurchaseRequest;
-                }
-                return item;
-            }));
-            setEditingItem(null);
-        } else {
-            const newId = dataList && dataList.length > 0 ? Math.max(...dataList.map(d => d.id)) + 1 : 1;
-            const newEntry: PurchaseRequest = {
-                id: newId,
-                prNumber: data.prNumber || "",
-                poNumber: "",
-                referenceNumber: data.referenceNumber || "",
-                prDate: data.requestDate || transactionDate,
-                dateNeeded: data.dateNeeded || "",
-                recipient: {
-                    image: "/images/user/user-19.jpg",
-                    name: data.requestedBy || "ADMIN",
-                    role: "Requester",
-                },
-                status: "Active",
-                requestedBy: data.requestedBy || "ADMIN",
-                transactionDate,
-                transactionTime,
-                costCenter: data.costCenter || "",
-                subCostCenter: data.subCostCenter || "",
-            };
-
-            setDataList(prev => [newEntry, ...prev]);
-        }
-
-        setShowCreateModal(false);
-    };
-
-    const handleDelete = (id: number) => {
-        const confirmed = window.confirm("Are you sure you want to delete this purchase request?");
-        if (confirmed) {
-            setDataList(prev => prev.filter(item => item.id !== id));
-        }
-        setOpenDropdownId(null);
+    const handleEdit = () => {
+        window.alert("Edit action triggered");
     };
 
     const handleBack = () => {
-        router.push("/inventory/purchase-transactions");
+        router.push("/inventory/stock-transactions");
     };
 
     const exportToExcel = () => {
         type ExportRow = {
-            "P.R#": string;
-            "P.O#": string;
-            Reference: string;
-            "PR Date": string;
-            "Date Needed": string;
-            Recipient: string;
+            "ADJ#": string;
+            Description: string;
+            "ADJ Date": string;
+            Location: string;
+            User: string;
+            "Updated Date": string;
+            "Updated Time": string;
+            Jrnlz: string;
             Status: string;
-            "Requested By": string;
-            "Transaction Date": string;
-            "Transaction Time": string;
-            "Cost Center": string;
-            "Sub Cost Center": string;
+            "Approved By": string;
+            "Approved Date": string;
         };
 
         const exportData: ExportRow[] = filteredData.map((data) => ({
-            "P.O#": data.poNumber,
-            "P.R#": data.prNumber,
-            Reference: data.referenceNumber || "—",
-            "PR Date": data.prDate || "—",
-            "Date Needed": data.dateNeeded || "—",
-            Recipient: data.recipient.name,
+            "ADJ#": data.adjNumber,
+            Description: data.description,
+            "ADJ Date": data.adjDate,
+            Location: data.location,
+            User: data.user.name,
+            "Updated Date": data.updatedDate,
+            "Updated Time": data.updatedTime,
+            Jrnlz: data.jrnlz,
             Status: data.status,
-            "Requested By": data.requestedBy || "—",
-            "Transaction Date": data.transactionDate || "—",
-            "Transaction Time": data.transactionTime || "—",
-            "Cost Center": data.costCenter || "—",
-            "Sub Cost Center": data.subCostCenter || "—",
+            "Approved By": data.approvedBy,
+            "Approved Date": data.approvedDate,
         }));
 
         const worksheet = XLSX.utils.json_to_sheet(exportData);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Purchase Requests");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Stock Adjustments");
         const colWidths = Object.keys(exportData[0]).map((key) =>
             Math.max(
                 key.length,
@@ -173,7 +113,7 @@ export default function PurchaseRequest() {
             ) + 2
             );
             worksheet["!cols"] = colWidths.map((w) => ({ wch: w }));
-            XLSX.writeFile(workbook, "purchase_request_list.xlsx"); // Use writeFile to match PaymentsTable
+            XLSX.writeFile(workbook, "stock_adjustment_list.xlsx"); // Use writeFile to match PaymentsTable
     };
 
     const toggleDropdown = (id: number) => {
@@ -194,19 +134,19 @@ export default function PurchaseRequest() {
                 <div className="flex flex-col sm:flex-row md:justify-end md:items-center gap-2 dark:text-white">
                     <input
                         type="text"
-                        placeholder="Search by recipient..."
+                        placeholder="Search by ADJ#..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-64 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                         aria-label="Search by name"
                     />
-                    <label htmlFor="minDate">Request Date:</label>
+                    <label htmlFor="minDate">Adjustment Date:</label>
                     <input 
                         id="minDate"
                         type="date"
                         title="Select the minimum request date"
-                        value={minRequestDate} 
-                        onChange={e => setMinRequestDate(e.target.value)} 
+                        value={minDate} 
+                        onChange={e => setMinDate(e.target.value)} 
                         className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-48 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                     />
                     <label htmlFor="maxDate">To:</label>
@@ -214,26 +154,13 @@ export default function PurchaseRequest() {
                         id="maxDate"
                         type="date"
                         title="Select the maximum request date"
-                        value={maxRequestDate} 
-                        onChange={e => setMaxRequestDate(e.target.value)} 
+                        value={maxDate} 
+                        onChange={e => setMaxDate(e.target.value)} 
                         className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-48 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                     />
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-48 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                        aria-label="Filter by status"
-                    >
-                        <option value="All">All Statuses</option>
-                        {validStatuses.map((status) => (
-                            <option key={status} value={status}>
-                                {status}
-                            </option>
-                        ))}
-                    </select>
                     <div className="flex gap-2 mt-2 sm:mt-0">
                         <button
-                            onClick={handleOpenCreateModal}
+                            onClick={handleAddNewAdjustment}
                             className="px-4 py-2 h-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center gap-2"
                         >
                             <svg
@@ -245,7 +172,7 @@ export default function PurchaseRequest() {
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                             </svg>
-                            New Purchase Request
+                            New Stock Adjustment
                         </button>
                         <button
                             onClick={exportToExcel}
@@ -273,18 +200,17 @@ export default function PurchaseRequest() {
                             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                                 <TableRow>
                                 {[
-                                    "P.R#",
-                                    "P.O#",
-                                    "Reference",
-                                    "PR Date",
-                                    "Date Needed",
-                                    "Recipient",
+                                    "ADJ#",
+                                    "Description",
+                                    "ADJ Date",
+                                    "Location",
+                                    "User",
+                                    "Updated Date",
+                                    "Updated Time",
+                                    "Jrnlz",
                                     "Status",
-                                    "Requested By",
-                                    "Transaction Date",
-                                    "Transaction Time",
-                                    "Cost Center",
-                                    "Sub Cost Center",
+                                    "Approved By",
+                                    "Approved Date",
                                 ].map((title) => (
                                     <TableCell
                                     key={title}
@@ -303,23 +229,19 @@ export default function PurchaseRequest() {
                                     <TableRow key={data.id}>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.prNumber || "—"}
+                                            {data.adjNumber || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.poNumber}
+                                            {data.description || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.referenceNumber}
+                                            {data.adjDate || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.prDate || "—"}
-                                        </TableCell>
-
-                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.dateNeeded || "—"}
+                                            {data.location || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-5 py-4 sm:px-6 text-start">
@@ -328,29 +250,39 @@ export default function PurchaseRequest() {
                                                 <Image
                                                 width={40}
                                                 height={40}
-                                                src={data.recipient.image}
-                                                alt={`Profile image of ${data.recipient.name}`}
+                                                src={data.user.image}
+                                                alt={`Profile image of ${data.user.name}`}
                                                 />
                                             </div>
                                             <div>
                                                 <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                                                {data.recipient.name}
+                                                {data.user.name}
                                                 </span>
                                                 <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
-                                                {data.recipient.role}
+                                                {data.user.role}
                                                 </span>
                                             </div>
                                             </div>
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.updatedDate || "—"}
+                                        </TableCell>
+
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.updatedTime || "—"}
+                                        </TableCell>
+
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.jrnlz || "—"}
+                                        </TableCell>
+
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                                             <Badge
                                             size="sm"
                                             color={
-                                                data.status === "Active"
+                                                data.status === "Approved"
                                                 ? "success"
-                                                : data.status === "Cancelled"
-                                                ? "error"
                                                 : "primary"
                                             }
                                             >
@@ -358,26 +290,14 @@ export default function PurchaseRequest() {
                                             </Badge>
                                         </TableCell>
 
-                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            ADMIN
-                                        </TableCell>
-
-                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.transactionDate || "—"}
-                                        </TableCell>
-
-                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.transactionTime || "—"}
-                                        </TableCell>
-
-                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.costCenter || "—"}
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">                                      
+                                            {data.approvedBy || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">                                      
-                                            {data.subCostCenter || "—"}
+                                            {data.approvedDate || "—"}
                                         </TableCell>
-                                        
+
                                         <TableCell className="px-4 py-3 text-start text-sm text-gray-600 dark:text-gray-300">
                                             <div className="relative">
                                             <button
@@ -393,25 +313,12 @@ export default function PurchaseRequest() {
                                                 >
                                                     <DropdownItem
                                                         className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                                                        onItemClick={() => {
-                                                            setEditingItem(data);
-                                                            setShowCreateModal(true);
-                                                            setOpenDropdownId(null);
-                                                        }}
+                                                        onItemClick={() => handleEdit()}
                                                         >
                                                         <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
                                                             <Edit className="h-4 w-4 text-white" />
                                                         </div>
                                                         Edit
-                                                    </DropdownItem>
-                                                    <DropdownItem
-                                                        className="text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm flex items-center gap-3 px-4 py-2.5"
-                                                        onItemClick={() => handleDelete(data.id)}
-                                                        >
-                                                        <div className="bg-gradient-to-r from-red-600 to-red-800 rounded-full h-6 w-6 flex items-center justify-center">
-                                                            <Trash2 className="h-4 w-4 text-white" />
-                                                        </div>
-                                                        Delete
                                                     </DropdownItem>
                                                 </Dropdown>
                                             </div>
@@ -433,17 +340,8 @@ export default function PurchaseRequest() {
 
             <CreatePurchaseRequestModal
                 isOpen={showCreateModal}
-                onClose={() => { setShowCreateModal(false); setEditingItem(null); }}
-                onSave={handleSaveNewPurchaseRequest}
-                initialData={editingItem ? {
-                    prNumber: editingItem.prNumber,
-                    referenceNumber: editingItem.referenceNumber,
-                    costCenter: editingItem.costCenter,
-                    subCostCenter: editingItem.subCostCenter,
-                    requestDate: editingItem.prDate,
-                    dateNeeded: editingItem.dateNeeded,
-                    items: [],
-                } : undefined}
+                onClose={() => setShowCreateModal(false)}
+                onSave={handleAddNewAdjustment}
             />
 
             <Pagination

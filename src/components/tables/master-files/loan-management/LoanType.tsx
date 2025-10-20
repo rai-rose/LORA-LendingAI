@@ -29,13 +29,13 @@ export default function LoanTypeList() {
   const itemsPerPage = 15;
 
   const filteredData = useMemo(() => {
-      return loans.filter((loanType) => {
+      return loans.filter((data) => {
           const search = searchQuery.toLowerCase();
           return (
-            loanType.code.toLowerCase().includes(search) ||
-            loanType.description.toLowerCase().includes(search) ||
-            loanType.format.toLowerCase().includes(search) ||
-            loanType.series.toLowerCase().includes(search)
+            data.code.toLowerCase().includes(search) ||
+            data.description.toLowerCase().includes(search) ||
+            data.format.toLowerCase().includes(search) ||
+            data.series.toLowerCase().includes(search)
           );
       });
   }, [searchQuery, loans]);
@@ -45,6 +45,37 @@ export default function LoanTypeList() {
     const endIndex = startIndex + itemsPerPage;
     return filteredData.slice(startIndex, endIndex);
   }, [filteredData, currentPage]);
+
+  const handleAddNewLoanType = () => {
+    setShowModal(true);
+  };
+
+  const handleAddLoanType = (loan: LoanType) => {
+    if (editLoan) {
+      setLoans((prev) =>
+        prev.map((l) => (l.id === loan.id ? { ...l, ...loan } : l))
+      );
+      setEditLoan(null);
+    } else {
+      setLoans((prev) => [...prev, loan]);
+    }
+  };
+
+  const handleEdit = (id: number) => {
+    const loanType = loans.find((l) => l.id === id);
+    if (loanType) setEditLoan(loanType);
+    setShowModal(true);
+    setOpenDropdownId(null);
+  };
+
+  const handleDelete = (id: number) => {
+    setLoans(loans.filter((loan) => loan.id !== id));
+    setOpenDropdownId(null);
+  };
+
+  const handleBack = () => {
+    router.push("/master-files/loan-management");
+  };
 
   const exportToExcel = () => {
     type ExportRow = {
@@ -78,89 +109,50 @@ export default function LoanTypeList() {
     setOpenDropdownId((prev) => (prev === id ? null : id));
   };
 
-  const handleAddNewLoanType = () => {
-    setShowModal(true);
-    console.log("Adding new loan type");
-  };
-
-  const handleAddLoanType = (loan: LoanType) => {
-    if (editLoan) {
-      setLoans((prev) =>
-        prev.map((l) => (l.id === loan.id ? { ...l, ...loan } : l))
-      );
-      setEditLoan(null);
-    } else {
-      setLoans((prev) => [...prev, loan]);
-    }
-  };
-
-  const handleEdit = (id: number) => {
-    const loanType = loans.find((l) => l.id === id);
-    if (loanType) setEditLoan(loanType);
-    setShowModal(true);
-    setOpenDropdownId(null);
-  };
-
-  const handleDelete = (id: number) => {
-    console.log("Deleting loan type:", id);
-    setLoans(loans.filter((loan) => loan.id !== id));
-    setOpenDropdownId(null);
-  };
-
-  const handleBack = () => {
-    router.push("/master-files/loan-management");
-  };
-
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={handleBack}
-          className="w-10 h-10 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </button>
-
-        <div className="flex items-center gap-3">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-64 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-            aria-label="Search by loan type code"
-          />
-          <button
-              onClick={exportToExcel}
-              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-800 text-white rounded-md text-sm hover:bg-green-600 transition-colors flex items-center gap-2"
-              title="Export to Excel"
-              aria-label="Export loan contracts to Excel"
-          >
-              <Image
-                src="/images/icons/excel.svg"
-                alt="Export to Excel icon"
-                width={20}
-                height={20}
-                className="w-5 h-5"
-              />
-              Export List
-          </button>
-          <button
-            onClick={handleAddNewLoanType}
-            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
-          >
-            <Plus className="h-5 w-5" />
-            Add New
-          </button>
-          <NewLoanTypeModal
-            isOpen={showModal}
-            onClose={() => {
-              setShowModal(false);
-              setEditLoan(null);
-            }}
-            onAdd={handleAddLoanType}
-            initialLoanType={editLoan}
-          />
+      <div className="flex flex-col md:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex gap-2 items-center">
+            <button
+              onClick={handleBack}
+              className="w-10 h-10 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+        </div>
+        <div className="flex flex-row-reverse sm:flex-col md:items-center gap-2 dark:text-white">
+          <div className="flex w-full items-center gap-3">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-64 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+              aria-label="Search by loan type code"
+            />
+            <button
+              onClick={handleAddNewLoanType}
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus className="h-5 w-5" />
+              Add New
+            </button>
+            <button
+                onClick={exportToExcel}
+                className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-800 text-white rounded-md text-sm hover:bg-green-600 transition-colors flex items-center gap-2"
+                title="Export to Excel"
+                aria-label="Export loan contracts to Excel"
+            >
+                <Image
+                  src="/images/icons/excel.svg"
+                  alt="Export to Excel icon"
+                  width={20}
+                  height={20}
+                  className="w-5 h-5"
+                />
+                Export List
+            </button>
+          </div>
         </div>
       </div>
       <div className="text-sm overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -251,6 +243,17 @@ export default function LoanTypeList() {
           </div>
         </div>
       </div>
+
+      <NewLoanTypeModal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setEditLoan(null);
+        }}
+        onAdd={handleAddLoanType}
+        initialLoanType={editLoan}
+      />
+
       <Pagination
         currentPage={currentPage}
         totalItems={loans.length}

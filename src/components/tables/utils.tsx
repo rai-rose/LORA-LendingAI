@@ -83,14 +83,118 @@ export interface PurchaseRequest {
   subCostCenter: string;
 }
 
+export interface PurchaseOrder {
+  id: number;
+  poNumber: string;
+  status: string;
+  supplier: string;
+  referenceNumber: string;
+  prNumber: string;
+  expectedOn: string;
+  requestedOn: string;
+  finalizedOn: string;
+  finalizedTime: string;
+  finalizedBy: string;
+  approvedOn: string;
+}
+
+export interface StockIssuance {
+  id: number;
+  issNumber: string;
+  description: string;
+  adjDate: string;
+  location: string;
+  status: string;
+  jrnlz: string;
+  userId: string;
+  date: string;
+  time: string;
+  locCode: string;
+  costCenter: string;
+}
+
+export interface StockAdjustment {
+  id: number;
+  adjNumber: string;
+  description: string;
+  adjDate: string;
+  location: string;
+  user: {
+    image: string;
+    name: string;
+    role: string;
+  };
+  updatedDate: string;
+  updatedTime: string;
+  jrnlz: string;
+  status: string;
+  approvedBy: string;
+  approvedDate: string;
+}
+
+export interface JournalEntries {
+  id: number;
+  refNumber: string;
+  date: string;
+  description: string;
+  paidTo: string;
+  check: string;
+  checkDate: string;
+  userId: string;
+  branch: string;
+  branchId: string;
+  systemDate: string;
+  systemTime: string;
+  status: string;
+  finalizedBy: string;
+  finalizedDate: string;
+}
+
+export const journalEntriesData: JournalEntries[] = [
+  {
+    id: 1,
+    refNumber: "JE-3001",
+    date: "2023-07-01",
+    description: "Journal Entry for July",
+    paidTo: "Supplier A",
+    check: "CHK-1001",
+    checkDate: "2023-07-05",
+    userId: "U-1001",
+    branch: "Main Branch",
+    branchId: "B-001",
+    systemDate: "2023-07-01",
+    systemTime: "10:30 AM",
+    status: "Finalized",
+    finalizedBy: "Alice Johnson",
+    finalizedDate: "2023-07-06",
+  },
+  {
+    id: 2,
+    refNumber: "JE-3002",
+    date: "2023-07-02",
+    description: "Journal Entry for August",
+    paidTo: "Supplier B",
+    check: "CHK-1002",
+    checkDate: "2023-07-06",
+    userId: "U-1002",
+    branch: "Secondary Branch",
+    branchId: "B-002",
+    systemDate: "2023-07-02",
+    systemTime: "11:00 AM",
+    status: "Cancelled",
+    finalizedBy: "-",
+    finalizedDate: "-",
+  },
+];
+
 export const purchaseRequestData: PurchaseRequest[] = [
   {
     id: 1,
     prNumber: "PR-1001",
     poNumber: "PO-2001",
     referenceNumber: "REF-3001",
-    prDate: "2025-07-01",
-    dateNeeded: "2025-07-10",
+    prDate: "2023-07-01",
+    dateNeeded: "2024-07-10",
     recipient: {
       image: "/images/user/user-19.jpg",
       name: "John Doe",
@@ -122,6 +226,89 @@ export const purchaseRequestData: PurchaseRequest[] = [
     costCenter: "Marketing",
     subCostCenter: "Digital Marketing",
   }
+];
+
+export const purchaseOrderData: PurchaseOrder[] = [
+  {
+    id: 1,
+    poNumber: "PO-2001",
+    status: "Printed",
+    supplier: "Supplier A",
+    referenceNumber: "REF-3001",
+    prNumber: "PR-1001",
+    expectedOn: "2023-07-15",
+    requestedOn: "2023-07-01",
+    finalizedOn: "-",
+    finalizedTime: "-",
+    finalizedBy: "Alice Johnson",
+    approvedOn: "-",
+  },
+  {
+    id: 2,
+    poNumber: "PO-2002",
+    status: "Approved",
+    supplier: "Supplier B",
+    referenceNumber: "REF-3002",
+    prNumber: "PR-1002",
+    expectedOn: "2023-09-15",
+    requestedOn: "2023-05-01",
+    finalizedOn: "2023-10-05",
+    finalizedTime: "01:00 PM",
+    finalizedBy: "Alice Johnson",
+    approvedOn: "2023-10-06",
+  },
+  {
+    id: 3,
+    poNumber: "PO-2023",
+    status: "Finalized",
+    supplier: "Supplier C",
+    referenceNumber: "REF-3003",
+    prNumber: "PR-1003",
+    expectedOn: "2023-07-15",
+    requestedOn: "2023-07-01",
+    finalizedOn: "2023-07-05",
+    finalizedTime: "02:00 PM",
+    finalizedBy: "Alice Johnson",
+    approvedOn: "-",
+  }
+];
+
+export const stockIssuanceData: StockIssuance[] = [
+  {
+    id: 1,
+    issNumber: "ISS-5001",
+    description: "Issuance for Project A",
+    adjDate: "2023-07-01",
+    location: "Warehouse 1",
+    status: "Cancelled",
+    jrnlz: "Yes",
+    userId: "U-1001",
+    date: "2023-07-01",
+    time: "10:30 AM",
+    locCode: "LOC-001",
+    costCenter: "Marketing",
+  },
+];
+
+export const stockAdjustmentData: StockAdjustment[] = [
+  {
+    id: 1,
+    adjNumber: "ADJ-6001",
+    description: "Adjustment for Inventory A",
+    adjDate: "2023-07-01",
+    location: "Warehouse 1",
+    user: {
+      image: "/images/user/user-19.jpg",
+      name: "John Doe",
+      role: "Developer",
+    },
+    updatedDate: "2023-07-02",
+    updatedTime: "11:00 AM",
+    jrnlz: "Yes",
+    status: "Approved",
+    approvedBy: "Alice Johnson",
+    approvedDate: "-",
+  },
 ];
 
 export const tableData: Order[] = [

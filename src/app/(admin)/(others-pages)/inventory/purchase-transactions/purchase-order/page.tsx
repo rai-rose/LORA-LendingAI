@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 export default function PurchaseOrder() {
     return (
         <div>
-            <PageBreadcrumb pageTitle="Purchase Order" />
+            <PageBreadcrumb pageTitle="Purchase Order List" />
             <div className="space-y-6">
-                <ComponentCard title="Manage and View Purchase Order Entries">
+                <ComponentCard title="Manage and View Purchase Order List">
                     <BasicTableOne activeMenu="purchase-order" />
                 </ComponentCard>
             </div>

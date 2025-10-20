@@ -12,47 +12,47 @@ import {
 import Badge from "../../../../ui/badge/Badge";
 import Image from "next/image";
 import * as XLSX from "xlsx";
-import { getActions, purchaseRequestData } from "../../../utils";
+import { purchaseOrderData } from "../../../utils";
 import { Ellipsis, Eye, Edit, ArrowLeft } from "lucide-react";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import Pagination from "@/components/tables/Pagination";
-import CreatePurchaseRequestModal from "@/components/ui/modal/CreatePurchaseRequest";
 
 export default function PurchaseOrder() {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
-    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [minRequestDate, setMinRequestDate] = useState("");
+    const [maxRequestDate, setMaxRequestDate] = useState("");
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const router = useRouter();
     const itemsPerPage = 10;
 
-    const validStatuses = ["Active", "Cancelled"];
+    const validStatuses = ["Printed", "Finalized", "Approved"];
 
     const filteredData = useMemo(() => {
-        return purchaseRequestData
-        .map((data) => ({
-            ...data,
-            actions: getActions(data.status, "loan-contract-list"),
-        }))
+        return purchaseOrderData
         .filter((data) => {
-            const matchesSearch = data.recipient.name
+            const matchesSearch = data.referenceNumber
             .toLowerCase()
             .includes(searchQuery.toLowerCase());
             const matchesStatus =
             statusFilter === "All" || data.status === statusFilter;
             return matchesSearch && matchesStatus;
+        })
+        .filter((data) => {
+            if (minRequestDate && data.requestedOn) {
+                return new Date(data.requestedOn) >= new Date(minRequestDate);
+            }
+            return true;
+        })
+        .filter((data) => {
+            if (maxRequestDate && data.requestedOn) {
+                return new Date(data.requestedOn) <= new Date(maxRequestDate);
+            }
+            return true;
         });
     }, [searchQuery, statusFilter, validStatuses]);
-
-    const handleAddNewLoan = () => {
-        setShowCreateModal(true);
-    };
-
-    const handleSavePurchaseRequest = (data: any) => {
-        setShowCreateModal(false);
-    };
 
     const handleBack = () => {
         router.push("/inventory/purchase-transactions");
@@ -66,38 +66,42 @@ export default function PurchaseOrder() {
 
     const exportToExcel = () => {
         type ExportRow = {
-            "P.R#": string;
             "P.O#": string;
-            Reference: string;
-            "PR Date": string;
-            "Date Needed": string;
-            Recipient: string;
             Status: string;
-            "Requested By": string;
-            "Transaction Date": string;
-            "Transaction Time": string;
-            "Cost Center": string;
-            "Sub Cost Center": string;
+            Supplier: string;
+            Reference: string;
+            "P.R#": string;
+            "Expected On": string;
+            "Requested On": string;
+            Printed: string;
+            Finalized: string;
+            "Finalized On": string;
+            "Finalized Time": string;
+            "Finalized By": string;
+            Approved: string;
+            "Approved On": string;
         };
 
         const exportData: ExportRow[] = filteredData.map((data) => ({
             "P.O#": data.poNumber,
-            "P.R#": data.prNumber,
-            Reference: data.referenceNumber || "—",
-            "PR Date": data.prDate || "—",
-            "Date Needed": data.dateNeeded || "—",
-            Recipient: data.recipient.name,
             Status: data.status,
-            "Requested By": data.requestedBy || "—",
-            "Transaction Date": data.transactionDate || "—",
-            "Transaction Time": data.transactionTime || "—",
-            "Cost Center": data.costCenter || "—",
-            "Sub Cost Center": data.subCostCenter || "—",
+            Supplier: data.supplier,
+            Reference: data.referenceNumber,
+            "P.R#": data.prNumber,
+            "Expected On": data.expectedOn || "—",
+            "Requested On": data.requestedOn || "—",
+            Printed: data.status === "Printed" ? "Yes" : "No",
+            Finalized: data.status === "Finalized" ? "Yes" : "No",
+            "Finalized On": data.finalizedOn || "—",
+            "Finalized Time": data.finalizedTime || "—",
+            "Finalized By": data.finalizedBy || "—",
+            Approved: data.status === "Approved" ? "Yes" : "No",
+            "Approved On": data.approvedOn || "—",
         }));
 
         const worksheet = XLSX.utils.json_to_sheet(exportData);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Purchase Requests");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Purchase Orders");
         const colWidths = Object.keys(exportData[0]).map((key) =>
             Math.max(
                 key.length,
@@ -105,7 +109,7 @@ export default function PurchaseOrder() {
             ) + 2
             );
             worksheet["!cols"] = colWidths.map((w) => ({ wch: w }));
-            XLSX.writeFile(workbook, "purchase_request_list.xlsx"); // Use writeFile to match PaymentsTable
+            XLSX.writeFile(workbook, "purchase_orders_list.xlsx"); // Use writeFile to match PaymentsTable
     };
 
     const toggleDropdown = (id: number) => {
@@ -123,19 +127,37 @@ export default function PurchaseOrder() {
                         <ArrowLeft className="h-5 w-5" />
                     </button>
                 </div>
-                <div className="flex flex-col md:flex-row md:justify-end md:items-center gap-2 w-full">
+                <div className="flex flex-col md:flex-row md:justify-end md:items-center gap-2 w-full dark:text-white">
                     <input
                         type="text"
-                        placeholder="Search by name..."
+                        placeholder="Search by reference..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-64 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                         aria-label="Search by borrower name"
                     />
+                    <label htmlFor="minDate">PO From:</label>
+                    <input 
+                        id="minDate"
+                        type="date"
+                        title="Select the minimum request date"
+                        value={minRequestDate} 
+                        onChange={e => setMinRequestDate(e.target.value)} 
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-40 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                    />
+                    <label htmlFor="maxDate">To:</label>
+                    <input 
+                        id="maxDate"
+                        type="date"
+                        title="Select the maximum request date"
+                        value={maxRequestDate} 
+                        onChange={e => setMaxRequestDate(e.target.value)} 
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-40 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                    />
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-48 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-48 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                         aria-label="Filter by status"
                     >
                         <option value="All">All Statuses</option>
@@ -147,7 +169,7 @@ export default function PurchaseOrder() {
                     </select>
                     <div className="flex gap-2 mt-2 sm:mt-0">
                         <button
-                            onClick={handleAddNewLoan}
+                            onClick={() => window.alert("Add New Purchase Order action triggered")}
                             className="px-4 py-2 h-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
                         >
                             <svg
@@ -159,7 +181,7 @@ export default function PurchaseOrder() {
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                             </svg>
-                            New Purchase Request
+                            New Purchase Order
                         </button>
                         <button
                             onClick={exportToExcel}
@@ -180,12 +202,6 @@ export default function PurchaseOrder() {
                 </div>
             </div>
 
-            <CreatePurchaseRequestModal
-                isOpen={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onSave={handleSavePurchaseRequest}
-            />
-
             <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                 <div className="max-w-full overflow-x-auto">
                     <div className="min-w-[1102px]">
@@ -193,18 +209,17 @@ export default function PurchaseOrder() {
                             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                                 <TableRow>
                                 {[
-                                    "P.R#",
                                     "P.O#",
-                                    "Reference",
-                                    "PR Date",
-                                    "Date Needed",
-                                    "Recipient",
                                     "Status",
-                                    "Requested By",
-                                    "Transaction Date",
-                                    "Transaction Time",
-                                    "Cost Center",
-                                    "Sub Cost Center",
+                                    "Supplier",
+                                    "Reference",
+                                    "P.R#",
+                                    "Expected On",
+                                    "Requested On",
+                                    "Finalized On",
+                                    "Finalized Time",
+                                    "Finalized By",
+                                    "Approved On",
                                 ].map((title) => (
                                     <TableCell
                                     key={title}
@@ -223,11 +238,28 @@ export default function PurchaseOrder() {
                                     <TableRow key={data.id}>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.prNumber || "—"}
+                                            {data.poNumber}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.poNumber}
+                                            <Badge
+                                                size="sm"
+                                                color={
+                                                    data.status === "Approved"
+                                                    ? "success"
+                                                    : data.status === "Printed"
+                                                    ? "info"
+                                                    : data.status === "Finalized"
+                                                    ? "warning"
+                                                    : "primary"
+                                                }
+                                                >
+                                                {data.status}
+                                            </Badge>
+                                        </TableCell>
+
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.supplier}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
@@ -235,67 +267,31 @@ export default function PurchaseOrder() {
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.prDate || "—"}
+                                            {data.prNumber}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.dateNeeded || "—"}
-                                        </TableCell>
-
-                                        <TableCell className="px-5 py-4 sm:px-6 text-start">
-                                            <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 overflow-hidden rounded-full">
-                                                <Image
-                                                width={40}
-                                                height={40}
-                                                src={data.recipient.image}
-                                                alt={`Profile image of ${data.recipient.name}`}
-                                                />
-                                            </div>
-                                            <div>
-                                                <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                                                {data.recipient.name}
-                                                </span>
-                                                <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
-                                                {data.recipient.role}
-                                                </span>
-                                            </div>
-                                            </div>
+                                            {data.expectedOn || "—"}
                                         </TableCell>
                                         
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            <Badge
-                                            size="sm"
-                                            color={
-                                                data.status === "Active"
-                                                ? "success"
-                                                : data.status === "Cancelled"
-                                                ? "error"
-                                                : "primary"
-                                            }
-                                            >
-                                            {data.status}
-                                            </Badge>
+                                            {data.requestedOn || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            ADMIN
+                                            {data.finalizedOn || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.transactionDate || "—"}
+                                            {data.finalizedTime || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.transactionTime || "—"}
+                                            {data.finalizedBy || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.costCenter || "—"}
-                                        </TableCell>
-
-                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">                                      
-                                            {data.subCostCenter || "—"}
+                                            {data.approvedOn || "—"}
                                         </TableCell>
                                         
                                         <TableCell className="px-4 py-3 text-start text-sm text-gray-600 dark:text-gray-300">
@@ -312,22 +308,22 @@ export default function PurchaseOrder() {
                                                     className="w-48 rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800 transition-colors duration-200"
                                                 >
                                                     <DropdownItem
-                                                    className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                                                    onItemClick={() => setOpenDropdownId(null)}
+                                                        className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                                                        onItemClick={() => setOpenDropdownId(null)}
                                                     >
-                                                    <div className="bg-gradient-to-r from-gray-600 to-gray-800 dark:bg-gray-400 rounded-full h-6 w-6 flex items-center justify-center">
-                                                        <Eye className="h-4 w-4 text-white" />
-                                                    </div>
-                                                    View Details
+                                                        <div className="bg-gradient-to-r from-gray-600 to-gray-800 dark:bg-gray-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                                            <Eye className="h-4 w-4 text-white" />
+                                                        </div>
+                                                        View Details
                                                     </DropdownItem>
                                                     <DropdownItem
-                                                    className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                                                    onItemClick={() => setOpenDropdownId(null)}
+                                                        className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
+                                                        onItemClick={() => setOpenDropdownId(null)}
                                                     >
-                                                    <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
-                                                        <Edit className="h-4 w-4 text-white" />
-                                                    </div>
-                                                    Edit
+                                                        <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
+                                                            <Edit className="h-4 w-4 text-white" />
+                                                        </div>
+                                                        Edit
                                                     </DropdownItem>
                                                 </Dropdown>
                                             </div>

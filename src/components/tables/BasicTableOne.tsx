@@ -14,6 +14,7 @@ import AccountingReportsList from "./reports/accounting-reports/AccountingReport
 
 interface BasicTableOneProps {
   activeMenu:
+    | "journal-entries"
     | "loan-application"
     | "loan-application-approval"
     | "loan-details"
@@ -24,6 +25,8 @@ interface BasicTableOneProps {
     | "purchase-request"
     | "purchase-order"
     | "stock-transactions"
+    | "stock-issuance"
+    | "stock-adjustment"
     | "loan-management"
     | "accounting"
     | "inventory"
@@ -37,6 +40,11 @@ interface BasicTableOneProps {
 }
 
 // Lazy load each table (not loaded until needed)
+const JournalEntries = dynamic(() => import("./accounting/journal-entries/JournalEntries"), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+
 const LoanApplicationTable = dynamic(() => import("./loans/loan-application/LoanApplication"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
@@ -66,6 +74,16 @@ const PurchaseRequest = dynamic(() => import("./inventory/purchase-transactions/
 });
 
 const PurchaseOrder = dynamic(() => import("./inventory/purchase-transactions/purchase-order/PurchaseOrder"), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+
+const StockIssuance = dynamic(() => import("./inventory/stock-transactions/stock-issuance/StockIssuance"), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+
+const StockAdjustment = dynamic(() => import("./inventory/stock-transactions/stock-adjustment/StockAdjustment"), {
   ssr: false,
   loading: () => <LoadingSpinner />,
 });
@@ -103,6 +121,7 @@ const SystemSettings = dynamic(() => import("./settings/SystemSettings"), {
 const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
   return (
     <div className="w-full">
+      {activeMenu === "journal-entries" && <JournalEntries />}
       {activeMenu === "loan-application" && <LoanApplicationTable />}
       {activeMenu === "loan-application-approval" && (
         <LoanApplicationApprovalTable />
@@ -115,6 +134,8 @@ const BasicTableOne: React.FC<BasicTableOneProps> = ({ activeMenu }) => {
       {activeMenu === "purchase-request" && <PurchaseRequest />}
       {activeMenu === "purchase-order" && <PurchaseOrder />}
       {activeMenu === "stock-transactions" && <StockTransactions />}
+      {activeMenu === "stock-issuance" && <StockIssuance />}
+      {activeMenu === "stock-adjustment" && <StockAdjustment />}
       {activeMenu === "loan-management" && <LoanManagementTable />}
       {activeMenu === "accounting" && <AccountingMasterFiles />}
       {activeMenu === "inventory" && <InventoryMasterFiles />}

@@ -5,19 +5,19 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-    title: "Purchase Request",
+    title: "Stock Adjustment",
     description:
-        "Purchase Request page for Lending AI",
+        "Stock Adjustment page for Lending AI",
   // other metadata
 };
 
-export default function PurchaseRequest() {
+export default function StockAdjustment() {
     return (
         <div>
-            <PageBreadcrumb pageTitle="Purchase Request List" />
+            <PageBreadcrumb pageTitle="Stock Adjustment" />
             <div className="space-y-6">
-                <ComponentCard title="Manage and View Purchase Invoices">
-                    <BasicTableOne activeMenu="purchase-request" />
+                <ComponentCard title="Manage and View Stock Adjustment">
+                    <BasicTableOne activeMenu="stock-adjustment" />
                 </ComponentCard>
             </div>
         </div>

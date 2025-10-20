@@ -1,44 +1,39 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import {
     Table,
     TableBody,
     TableCell,
     TableHeader,
     TableRow,
-} from "../../../../ui/table";
-import Badge from "../../../../ui/badge/Badge";
+} from "../../../ui/table";
+import Badge from "../../../ui/badge/Badge";
 import Image from "next/image";
 import * as XLSX from "xlsx";
-import { purchaseRequestData } from "../../../utils";
-import type { PurchaseRequest } from "../../../utils";
-import { Ellipsis, Edit, ArrowLeft, Trash2 } from "lucide-react";
+import { journalEntriesData } from "../../utils";
+import { Ellipsis, Trash2 } from "lucide-react";
 import { Dropdown } from "@/components/ui/dropdown/Dropdown";
 import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 import Pagination from "@/components/tables/Pagination";
 import CreatePurchaseRequestModal from "@/components/ui/modal/CreatePurchaseRequestModal";
 
-export default function PurchaseRequest() {
-    const [searchQuery, setSearchQuery] = useState("");
+export default function JournalEntries() {
+    const [searchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
     const [minRequestDate, setMinRequestDate] = useState("");
     const [maxRequestDate, setMaxRequestDate] = useState("");
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [dataList, setDataList] = useState<PurchaseRequest[]>(purchaseRequestData);
-    const [editingItem, setEditingItem] = useState<PurchaseRequest | null>(null);
-    const router = useRouter();
     const itemsPerPage = 15;
 
-    const validStatuses = ["Active", "Cancelled"];
+    const validStatuses = ["Finalized", "Cancelled"];
 
     const filteredData = useMemo(() => {
-        return dataList
+        return journalEntriesData
         .filter((data) => {
-            const matchesSearch = data.recipient.name
+            const matchesSearch = data.refNumber
             .toLowerCase()
             .includes(searchQuery.toLowerCase());
             const matchesStatus =
@@ -46,18 +41,18 @@ export default function PurchaseRequest() {
             return matchesSearch && matchesStatus;
         })
         .filter((data) => {
-            if (minRequestDate && data.dateNeeded) {
-                return new Date(data.dateNeeded) >= new Date(minRequestDate);
+            if (minRequestDate && data.date) {
+                return new Date(data.date) >= new Date(minRequestDate);
             }
             return true;
         })
         .filter((data) => {
-            if (maxRequestDate && data.dateNeeded) {
-                return new Date(data.dateNeeded) <= new Date(maxRequestDate);
+            if (maxRequestDate && data.date) {
+                return new Date(data.date) <= new Date(maxRequestDate);
             }
             return true;
         });
-    }, [searchQuery, statusFilter, validStatuses, minRequestDate, maxRequestDate, dataList]);
+    }, [searchQuery, statusFilter, validStatuses, minRequestDate, maxRequestDate]);
 
     const paginatedData = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
@@ -65,102 +60,43 @@ export default function PurchaseRequest() {
         return filteredData.slice(startIndex, endIndex);
     }, [filteredData, currentPage]);
 
-    const handleOpenCreateModal = () => {
-        setShowCreateModal(true);
-        setOpenDropdownId(null);
-    };
-
-    const handleSaveNewPurchaseRequest = (data: any) => {
-        const now = new Date();
-        const transactionDate = now.toISOString().split("T")[0];
-        const transactionTime = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-        if (editingItem) {
-            setDataList(prev => prev.map(item => {
-                if (item.id === editingItem.id) {
-                    return {
-                        ...item,
-                        prNumber: data.prNumber || item.prNumber,
-                        referenceNumber: data.referenceNumber || item.referenceNumber,
-                        prDate: data.requestDate || item.prDate,
-                        dateNeeded: data.dateNeeded || item.dateNeeded,
-                        requestedBy: data.requestedBy || item.requestedBy,
-                        costCenter: data.costCenter || item.costCenter,
-                        subCostCenter: data.subCostCenter || item.subCostCenter,
-                    } as PurchaseRequest;
-                }
-                return item;
-            }));
-            setEditingItem(null);
-        } else {
-            const newId = dataList && dataList.length > 0 ? Math.max(...dataList.map(d => d.id)) + 1 : 1;
-            const newEntry: PurchaseRequest = {
-                id: newId,
-                prNumber: data.prNumber || "",
-                poNumber: "",
-                referenceNumber: data.referenceNumber || "",
-                prDate: data.requestDate || transactionDate,
-                dateNeeded: data.dateNeeded || "",
-                recipient: {
-                    image: "/images/user/user-19.jpg",
-                    name: data.requestedBy || "ADMIN",
-                    role: "Requester",
-                },
-                status: "Active",
-                requestedBy: data.requestedBy || "ADMIN",
-                transactionDate,
-                transactionTime,
-                costCenter: data.costCenter || "",
-                subCostCenter: data.subCostCenter || "",
-            };
-
-            setDataList(prev => [newEntry, ...prev]);
-        }
-
-        setShowCreateModal(false);
-    };
-
-    const handleDelete = (id: number) => {
-        const confirmed = window.confirm("Are you sure you want to delete this purchase request?");
-        if (confirmed) {
-            setDataList(prev => prev.filter(item => item.id !== id));
-        }
-        setOpenDropdownId(null);
-    };
-
-    const handleBack = () => {
-        router.push("/inventory/purchase-transactions");
+    const handleAddNewEntry = () => {
+        window.alert("Add New Journal Entry action triggered");
     };
 
     const exportToExcel = () => {
         type ExportRow = {
-            "P.R#": string;
-            "P.O#": string;
-            Reference: string;
-            "PR Date": string;
-            "Date Needed": string;
-            Recipient: string;
+            "Ref Num": string;
+            Date: string;
+            Description: string;
+            "Paid To": string;
+            Check: string;
+            "Check Date": string;
+            "User ID": string;
+            Branch: string;
+            "Branch ID": string;
+            "System Date": string;
+            "System Time": string;
             Status: string;
-            "Requested By": string;
-            "Transaction Date": string;
-            "Transaction Time": string;
-            "Cost Center": string;
-            "Sub Cost Center": string;
+            "Finalized By": string;
+            "Finalized On": string;
         };
 
         const exportData: ExportRow[] = filteredData.map((data) => ({
-            "P.O#": data.poNumber,
-            "P.R#": data.prNumber,
-            Reference: data.referenceNumber || "—",
-            "PR Date": data.prDate || "—",
-            "Date Needed": data.dateNeeded || "—",
-            Recipient: data.recipient.name,
+            "Ref Num": data.refNumber,
+            Date: data.date,
+            Description: data.description,
+            "Paid To": data.paidTo,
+            Check: data.check,
+            "Check Date": data.checkDate,
+            "User ID": data.userId,
+            Branch: data.branch,
+            "Branch ID": data.branchId,
+            "System Date": data.systemDate,
+            "System Time": data.systemTime,
             Status: data.status,
-            "Requested By": data.requestedBy || "—",
-            "Transaction Date": data.transactionDate || "—",
-            "Transaction Time": data.transactionTime || "—",
-            "Cost Center": data.costCenter || "—",
-            "Sub Cost Center": data.subCostCenter || "—",
+            "Finalized By": data.finalizedBy,
+            "Finalized On": data.finalizedDate,
         }));
 
         const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -182,25 +118,9 @@ export default function PurchaseRequest() {
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex gap-2 items-center">
-                    <button
-                        onClick={handleBack}
-                        className="w-10 h-10 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center"
-                    >
-                        <ArrowLeft className="h-5 w-5" />
-                    </button>
-                </div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4">
                 <div className="flex flex-col sm:flex-row md:justify-end md:items-center gap-2 dark:text-white">
-                    <input
-                        type="text"
-                        placeholder="Search by recipient..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-64 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                        aria-label="Search by name"
-                    />
-                    <label htmlFor="minDate">Request Date:</label>
+                    <label htmlFor="minDate">Period:</label>
                     <input 
                         id="minDate"
                         type="date"
@@ -233,7 +153,7 @@ export default function PurchaseRequest() {
                     </select>
                     <div className="flex gap-2 mt-2 sm:mt-0">
                         <button
-                            onClick={handleOpenCreateModal}
+                            onClick={handleAddNewEntry}
                             className="px-4 py-2 h-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-md text-sm hover:bg-blue-600 transition-colors flex items-center gap-2"
                         >
                             <svg
@@ -245,7 +165,7 @@ export default function PurchaseRequest() {
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                             </svg>
-                            New Purchase Request
+                            New Entry
                         </button>
                         <button
                             onClick={exportToExcel}
@@ -273,18 +193,20 @@ export default function PurchaseRequest() {
                             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                                 <TableRow>
                                 {[
-                                    "P.R#",
-                                    "P.O#",
-                                    "Reference",
-                                    "PR Date",
-                                    "Date Needed",
-                                    "Recipient",
+                                    "Ref Num",
+                                    "Date",
+                                    "Description",
+                                    "Paid To",
+                                    "Check",
+                                    "Check Date",
+                                    "User ID",
+                                    "Branch",
+                                    "Branch ID",
+                                    "System Date",
+                                    "System Time",
                                     "Status",
-                                    "Requested By",
-                                    "Transaction Date",
-                                    "Transaction Time",
-                                    "Cost Center",
-                                    "Sub Cost Center",
+                                    "Finalized By",
+                                    "Finalized On",
                                 ].map((title) => (
                                     <TableCell
                                     key={title}
@@ -303,51 +225,54 @@ export default function PurchaseRequest() {
                                     <TableRow key={data.id}>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.prNumber || "—"}
+                                            {data.refNumber || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.poNumber}
+                                            {data.date || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.referenceNumber}
+                                            {data.description || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.prDate || "—"}
+                                            {data.paidTo || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.dateNeeded || "—"}
+                                            {data.check || "—"}
                                         </TableCell>
 
-                                        <TableCell className="px-5 py-4 sm:px-6 text-start">
-                                            <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 overflow-hidden rounded-full">
-                                                <Image
-                                                width={40}
-                                                height={40}
-                                                src={data.recipient.image}
-                                                alt={`Profile image of ${data.recipient.name}`}
-                                                />
-                                            </div>
-                                            <div>
-                                                <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                                                {data.recipient.name}
-                                                </span>
-                                                <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
-                                                {data.recipient.role}
-                                                </span>
-                                            </div>
-                                            </div>
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.checkDate || "—"}
+                                        </TableCell>
+
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.userId || "—"}
+                                        </TableCell>
+
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.branch || "—"}
+                                        </TableCell>
+
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.branchId || "—"}
+                                        </TableCell>
+
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.systemDate || "—"}
+                                        </TableCell>
+
+                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                                            {data.systemTime || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                                             <Badge
                                             size="sm"
                                             color={
-                                                data.status === "Active"
+                                                data.status === "Finalized"
                                                 ? "success"
                                                 : data.status === "Cancelled"
                                                 ? "error"
@@ -359,23 +284,11 @@ export default function PurchaseRequest() {
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            ADMIN
+                                            {data.finalizedBy || "—"}
                                         </TableCell>
 
                                         <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.transactionDate || "—"}
-                                        </TableCell>
-
-                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.transactionTime || "—"}
-                                        </TableCell>
-
-                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                                            {data.costCenter || "—"}
-                                        </TableCell>
-
-                                        <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">                                      
-                                            {data.subCostCenter || "—"}
+                                            {data.finalizedDate || "—"}
                                         </TableCell>
                                         
                                         <TableCell className="px-4 py-3 text-start text-sm text-gray-600 dark:text-gray-300">
@@ -392,21 +305,8 @@ export default function PurchaseRequest() {
                                                     className="w-48 rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-800 transition-colors duration-200"
                                                 >
                                                     <DropdownItem
-                                                        className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 text-sm flex items-center gap-3 px-4 py-2.5 transition-colors duration-150"
-                                                        onItemClick={() => {
-                                                            setEditingItem(data);
-                                                            setShowCreateModal(true);
-                                                            setOpenDropdownId(null);
-                                                        }}
-                                                        >
-                                                        <div className="bg-gradient-to-r from-blue-600 to-blue-800 dark:bg-blue-400 rounded-full h-6 w-6 flex items-center justify-center">
-                                                            <Edit className="h-4 w-4 text-white" />
-                                                        </div>
-                                                        Edit
-                                                    </DropdownItem>
-                                                    <DropdownItem
                                                         className="text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm flex items-center gap-3 px-4 py-2.5"
-                                                        onItemClick={() => handleDelete(data.id)}
+                                                        onItemClick={() => window.alert("Delete action triggered")}
                                                         >
                                                         <div className="bg-gradient-to-r from-red-600 to-red-800 rounded-full h-6 w-6 flex items-center justify-center">
                                                             <Trash2 className="h-4 w-4 text-white" />
@@ -433,17 +333,8 @@ export default function PurchaseRequest() {
 
             <CreatePurchaseRequestModal
                 isOpen={showCreateModal}
-                onClose={() => { setShowCreateModal(false); setEditingItem(null); }}
-                onSave={handleSaveNewPurchaseRequest}
-                initialData={editingItem ? {
-                    prNumber: editingItem.prNumber,
-                    referenceNumber: editingItem.referenceNumber,
-                    costCenter: editingItem.costCenter,
-                    subCostCenter: editingItem.subCostCenter,
-                    requestDate: editingItem.prDate,
-                    dateNeeded: editingItem.dateNeeded,
-                    items: [],
-                } : undefined}
+                onClose={() => setShowCreateModal(false)}
+                onSave={handleAddNewEntry}
             />
 
             <Pagination

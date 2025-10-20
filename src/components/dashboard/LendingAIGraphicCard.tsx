@@ -31,28 +31,28 @@ export default function ExcellentBorrowersTrack() {
       city: "Manila",
       payments: 36,
       percentage: 98,
-      profileImage: "/images/profiles/john-doe.jpg",
+      profileImage: "/images/user/user-01.jpg",
     },
     {
       name: "Maria Santos",
       city: "Cebu",
       payments: 24,
       percentage: 95,
-      profileImage: "/images/profiles/maria-santos.jpg",
+      profileImage: "/images/user/user-03.jpg",
     },
     {
       name: "Juan Cruz",
       city: "Davao",
       payments: 18,
       percentage: 90,
-      profileImage: "/images/profiles/juan-cruz.jpg",
+      profileImage: "/images/user/user-02.jpg",
     },
     {
       name: "Ana Reyes",
       city: "Quezon City",
       payments: 12,
       percentage: 85,
-      profileImage: "/images/profiles/ana-reyes.jpg",
+      profileImage: "/images/user/user-04.jpg",
     },
   ];
 
